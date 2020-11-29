@@ -15,13 +15,13 @@ namespace ApiMongo.Controllers
         // GET: Estudiantes
         public ICollection<BsonDocument> Get()
         {
-            return MongoDBAccess.getEstudianteDocuments().Find(new BsonDocument()).ToList();
+            return MongoDBAccess.GetEstudianteDocuments().Find(new BsonDocument()).ToList();
         }
 
         // GET: Estudiante by carnet
         public BsonDocument GetEstudiante(int carnet) {
             var carnetQuery = new BsonDocument("Carnet", carnet);
-            foreach (BsonDocument estudiante in MongoDBAccess.getEstudianteDocuments().Find(new BsonDocument()).ToList()) {
+            foreach (BsonDocument estudiante in MongoDBAccess.GetEstudianteDocuments().Find(new BsonDocument()).ToList()) {
                 BsonValue x;
                 estudiante.TryGetValue("Carnet", out x);
                 if (x.Equals(carnet)) {
@@ -61,7 +61,7 @@ namespace ApiMongo.Controllers
                 };
                 BsonValue id;
                 old.TryGetValue("_id", out id);
-                MongoDBAccess.getEstudianteDocuments().UpdateOne(new BsonDocument("_id", id),new BsonDocument("$set", document));
+                MongoDBAccess.GetEstudianteDocuments().UpdateOne(new BsonDocument("_id", id),new BsonDocument("$set", document));
             }
 
         }
@@ -77,7 +77,7 @@ namespace ApiMongo.Controllers
                 { "Telefono", telefono },
                 { "Contrasenna", Encript.EncriptString(contrasenna) }
             };
-            MongoDBAccess.getEstudianteDocuments().InsertOne(document);
+            MongoDBAccess.GetEstudianteDocuments().InsertOne(document);
         }
     }
 }

@@ -15,9 +15,15 @@ namespace ApiMongo.Controllers
         public MongoDBAccess() {
         }
 
-        public static IMongoCollection<BsonDocument> getEstudianteDocuments() {
+        public static IMongoCollection<BsonDocument> GetEstudianteDocuments() {
 
             return database.GetCollection<BsonDocument>("Estudiantes");
+        }
+
+        public static IMongoCollection<BsonDocument> GetProfesoresDocuments()
+        {
+
+            return database.GetCollection<BsonDocument>("Profesores");
         }
     }
 }
