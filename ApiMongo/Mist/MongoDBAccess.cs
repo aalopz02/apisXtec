@@ -25,5 +25,10 @@ namespace ApiMongo.Controllers
 
             return database.GetCollection<BsonDocument>("Profesores");
         }
+        public static IMongoCollection<BsonDocument> GetAdminDocuments()
+        {
+
+            return database.GetCollection<BsonDocument>("Admin");
+        }
     }
 }
