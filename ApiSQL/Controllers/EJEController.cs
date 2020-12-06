@@ -11,7 +11,6 @@ namespace ApiSQL.Controllers
     {
         public IEnumerable<string> Get()
         {
-
             return new string[] { "ok" };
         }
     }
