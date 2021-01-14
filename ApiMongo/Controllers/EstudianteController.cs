@@ -19,7 +19,7 @@ namespace ApiMongo.Controllers
         }
 
         // GET: Estudiante by carnet
-        public BsonDocument GetEstudiante(int carnet) {
+        public BsonDocument GetEstudiante(string carnet) {
             var carnetQuery = new BsonDocument("Carnet", carnet);
             foreach (BsonDocument estudiante in MongoDBAccess.GetEstudianteDocuments().Find(new BsonDocument()).ToList()) {
                 BsonValue x;
@@ -33,7 +33,7 @@ namespace ApiMongo.Controllers
 
         //Patch estudiante
         //https://localhost:44370/api/Estudiante?carnetEstudiante=12345&nombre=Andres_A&correo=aalopz02@gmial.com&telefono=8888&contrasenna=clave
-        public void PatchEstudiante(int carnetEstudiante, String nombre, String correo, int telefono, String contrasenna)
+        public void PatchEstudiante(string carnetEstudiante, String nombre, String correo, int telefono, String contrasenna)
         {
             BsonDocument old = GetEstudiante(carnetEstudiante);
             if (old == null)
@@ -68,7 +68,7 @@ namespace ApiMongo.Controllers
 
         //Post estudiante
         //https://localhost:44370/api/Estudiante?carnet=12345&nombre=Andres_A&correo=aalopz02@gmial.com&telefono=8888&contrasenna=clave
-        public void PostEstudiante(int carnet, String nombre, String correo, int telefono, String contrasenna) {
+        public void PostEstudiante(string carnet, String nombre, String correo, int telefono, String contrasenna) {
 
             var document = new BsonDocument { 
                 { "Carnet", carnet },

@@ -16,9 +16,10 @@ namespace ApiMongo.Controllers
         public ICollection<BsonDocument> Get()
         {
             return MongoDBAccess.GetProfesoresDocuments().Find(new BsonDocument()).ToList();
-        } 
+        }
 
         // GET: Profesor by cedula
+        [System.Web.Http.Cors.DisableCors()]
         public BsonDocument GetProfesor(int cedula)
         {
             var carnetQuery = new BsonDocument("Cedula", cedula);
