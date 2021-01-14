@@ -203,4 +203,7 @@ C:\Users\aalop\ApisXtec\apisXtec\ApiMongo\bin\System.ValueTuple.xml
 C:\Users\aalop\ApisXtec\apisXtec\ApiMongo\bin\System.Web.Cors.dll
 C:\Users\aalop\ApisXtec\apisXtec\ApiMongo\bin\System.Web.Http.Cors.dll
 C:\Users\aalop\ApisXtec\apisXtec\ApiMongo\bin\System.Web.Http.Cors.xml
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes

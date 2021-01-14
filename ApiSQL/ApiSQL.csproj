@@ -169,6 +169,9 @@
     <Compile Include="Models\PROFESOR_ASIGNADO.cs" />
     <Compile Include="Models\RUBRO.cs" />
     <Compile Include="Models\SEMESTRE.cs" />
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
