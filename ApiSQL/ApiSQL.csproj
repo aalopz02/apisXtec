@@ -139,11 +139,9 @@
     <Compile Include="Controllers\ESTUDIANTE_MATRICULADOController.cs" />
     <Compile Include="Controllers\EVALUACIONController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-<<<<<<< Updated upstream
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-=======
     <Compile Include="Controllers\ExcelController.cs" />
     <Compile Include="Controllers\NOTICIAController.cs" />
     <Compile Include="Controllers\PROFESOR_ASIGNADOController.cs" />
@@ -169,10 +167,6 @@
     <Compile Include="Models\PROFESOR_ASIGNADO.cs" />
     <Compile Include="Models\RUBRO.cs" />
     <Compile Include="Models\SEMESTRE.cs" />
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
