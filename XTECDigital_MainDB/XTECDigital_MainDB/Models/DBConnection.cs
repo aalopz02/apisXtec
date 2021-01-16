@@ -273,7 +273,6 @@ namespace XTECDigital_MainDB.Models
 
         // ----------------------------- EVALUACIÓN -----------------------------
 
-        //LISTO
         public ArrayList GetEvaluacionesProfesor(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno, String nombre)
         {
             ArrayList evaluaciones = new ArrayList();
@@ -290,11 +289,10 @@ namespace XTECDigital_MainDB.Models
             return evaluaciones;
         }
 
-        //LISTO
-        public ArrayList GetEvaluacionesEstudiante(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_carnet, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno , String nombre)
+        public ArrayList GetTiposEvaluacion(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
             ArrayList evaluaciones = new ArrayList();
-            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "', Curso_Grupo = '" + curso_grupo + "', Curso_Código = '" + curso_codigo + "', Sem_Periodo = " + sem_periodo + ", Sem_Año = " + sem_anno + ", Est_Carnet = '" + est_carnet + "', Est_Curso_Grupo = " + est_curso_grupo + ", Est_Curso_Código = '" + est_curso_codigo + "', Est_Sem_Periodo = " + est_sem_periodo + ", Est_Sem_Año = " + est_sem_anno + ", Nombre = '" + nombre + "';";
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "', Curso_Grupo = '" + curso_grupo + "', Curso_Código = '" + curso_codigo + "', Sem_Periodo = " + sem_periodo + ", Sem_Año = " + sem_anno + " GROUPBY Nombre;";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
@@ -307,7 +305,32 @@ namespace XTECDigital_MainDB.Models
             return evaluaciones;
         }
 
-        //LISTO
+        public ArrayList GetEvaluacionesEstudiante(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_carnet, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno)
+        {
+            ArrayList evaluaciones = new ArrayList();
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,0,'0',Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,'N/A',Forma_Evaluación,0,'0', FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "', Curso_Grupo = '" + curso_grupo + "', Curso_Código = '" + curso_codigo + "', Sem_Periodo = " + sem_periodo + ", Sem_Año = " + sem_anno + ", Est_Carnet = '" + est_carnet + "', Est_Curso_Grupo = " + est_curso_grupo + ", Est_Curso_Código = '" + est_curso_codigo + "', Est_Sem_Periodo = " + est_sem_periodo + ", Est_Sem_Año = " + est_sem_anno + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            String estado;
+            while (reader.Read())
+            {
+                estado = reader.GetString(18);
+                if (estado == "Visible") 
+                {
+                    EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), reader.GetFloat(16), reader.GetString(17), estado);
+                    evaluaciones.Add(evaluacion);
+                }
+                else
+                {
+                    EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), 0, reader.GetString(17), estado);
+                    evaluaciones.Add(evaluacion);
+                }
+            }
+            connection.Close();
+            return evaluaciones;
+        }
+
         public String CreateEvaluacion(EVALUACION evaluacion)
         {
             if (evaluacion.Forma_Evaluacion == 1)
@@ -330,7 +353,6 @@ namespace XTECDigital_MainDB.Models
             }
         }
 
-        //LISTO
         public String UpdateEvaluacion(EVALUACION evaluacion)
         {
             String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "';";
@@ -350,7 +372,6 @@ namespace XTECDigital_MainDB.Models
             return "404";
         }
 
-        //LISTO
         public String DeleteEvaluacion(EVALUACION evaluacion)
         {
             String queryString = "SELECT Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM RUBRO WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "';";
