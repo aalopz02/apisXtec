@@ -166,6 +166,7 @@
     <Compile Include="Controllers\ENTREGABLEController.cs" />
     <Compile Include="Controllers\ESTUDIANTE_MATRICULADOController.cs" />
     <Compile Include="Controllers\EVALUACIONController.cs" />
+    <Compile Include="Controllers\ExpedienteController.cs" />
     <Compile Include="Controllers\NOTICIAController.cs" />
     <Compile Include="Controllers\PROFESOR_ASIGNADOController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
@@ -177,6 +178,7 @@
     </Compile>
     <Compile Include="Models\CARPETA.cs" />
     <Compile Include="Models\CARRERA.cs" />
+    <Compile Include="Models\EXPEDIENTE.cs" />
     <Compile Include="Models\CURSO.cs" />
     <Compile Include="Models\CURSO_IMPARTIDO.cs" />
     <Compile Include="Models\DBConnection.cs" />

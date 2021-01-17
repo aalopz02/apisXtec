@@ -292,7 +292,7 @@ namespace XTECDigital_MainDB.Models
         public ArrayList GetTiposEvaluacion(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
             ArrayList evaluaciones = new ArrayList();
-            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "', Curso_Grupo = '" + curso_grupo + "', Curso_Código = '" + curso_codigo + "', Sem_Periodo = " + sem_periodo + ", Sem_Año = " + sem_anno + " GROUPBY Nombre;";
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "', Curso_Grupo = '" + curso_grupo + "', Curso_Código = '" + curso_codigo + "', Sem_Periodo = " + sem_periodo + ", Sem_Año = " + sem_anno + " GROUP BY Nombre;";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
@@ -389,6 +389,23 @@ namespace XTECDigital_MainDB.Models
             }
             connection.Close();
             return "404";
+        }
+
+        // ----------------------------- EXPEDIENTE -----------------------------
+        public ArrayList GetExpediente(String carnet)
+        {
+            ArrayList cursos = new ArrayList();
+            String queryString = "EXEC SP_EVALUACIÓN_EXP_EST @Carnet = '" + carnet + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                EXPEDIENTE expediente = new EXPEDIENTE(reader.GetFloat(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetString(5));
+                cursos.Add(expediente);
+            }
+            connection.Close();
+            return cursos;
         }
 
     }
