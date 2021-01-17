@@ -1,5 +1,3 @@
-C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\obj\Debug\ApiSQL.csprojAssemblyReference.cache
-C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\obj\Debug\ApiSQL.csproj.CoreCompileInputs.cache
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\ApiSQL.dll.config
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\ApiSQL.dll
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\ApiSQL.pdb
@@ -80,6 +78,11 @@ C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\System.Web.WebPages.Razor.xml
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\Newtonsoft.Json.xml
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\Antlr3.Runtime.pdb
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\obj\Debug\ApiSQL.csprojAssemblyReference.cache
+C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\obj\Debug\ApiSQL.csproj.CoreCompileInputs.cache
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\obj\Debug\ApiSQL.csproj.CopyComplete
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\obj\Debug\ApiSQL.dll
 C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\obj\Debug\ApiSQL.pdb
+C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\System.Web.Cors.dll
+C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\System.Web.Http.Cors.dll
+C:\Users\aalop\ApisXtec\apisXtec\ApiSQL\bin\System.Web.Http.Cors.xml

@@ -16,7 +16,8 @@ namespace ApiSQL.Models
     public class DBConnection
     {
 
-        private string urlExcel = "D://OneDrive//Escritorio//repo//cvsTemp//";
+        private string urlExcel = "C://inetpub//wwwroot//repo//cvsTemp//";
+        //private string urlExcel = "D://OneDrive//Escritorio//repo//";
         private string tempTableName = "tablaTemp";
 
         public OdbcConnection connection;
@@ -27,6 +28,45 @@ namespace ApiSQL.Models
         public DBConnection()
         {
             connection = new OdbcConnection("Dsn=XTECDigital_ODBC;" + "Uid=XTECDigital;" + "Pwd=123;");
+        }
+
+        public ArrayList GetSemestre()
+        {
+            try
+            {
+                String queryString = "SELECT * FROM ESTUDIANTE_MATRICULADO;";
+                connection.Open();
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                OdbcDataReader reader = command.ExecuteReader();
+                ArrayList folders = new ArrayList();
+                while (reader.Read())
+                {
+                    ESTUDIANTE_MATRICULADO folder = new ESTUDIANTE_MATRICULADO(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3).ToCharArray()[0], reader.GetString(4));
+                    folders.Add(folder);
+                }
+                connection.Close();
+                
+                queryString = "SELECT * FROM tablaTemp;";
+                connection.Open();
+                command = new OdbcCommand(queryString, connection);
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    ESTUDIANTE_MATRICULADO folder = new ESTUDIANTE_MATRICULADO(reader.GetString(0), reader.GetString(4), reader.GetString(5), reader.GetString(3).ToCharArray()[0], reader.GetString(4));
+                    folders.Add(folder);
+                }
+                connection.Close();
+                
+                return folders;
+            }
+            catch (OdbcException e)
+            {
+                ArrayList error = new ArrayList();
+                error.Add(e.Message);
+                return error;
+            }
+            
+            
         }
 
         // ----------------------------- CARPETA -----------------------------
@@ -151,10 +191,6 @@ namespace ApiSQL.Models
             return "404";
         }
 
-        // ----------------------------- CURSO -----------------------------
-
-
-
         // ----------------------------- CURSO_IMPARTIDO -----------------------------
 
         public ArrayList GetProfesorCursoImpartido(String cedula)
@@ -191,7 +227,7 @@ namespace ApiSQL.Models
 
             public String CreateCursoImpartido(CURSO_IMPARTIDO curso_impartido)
             {
-            String queryString = "INSERT INTO CURSO_IMPARTIDO (Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + curso_impartido.Grupo + ",'" + curso_impartido.Curso_Codigo + "'," + curso_impartido.Sem_Periodo + "," + curso_impartido.Sem_Anno + ");";
+            String queryString = "INSERT INTO CURSO_IMPARTIDO (Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + curso_impartido.Grupo + ",'" + curso_impartido.Curso_Codigo + "', " + curso_impartido.Sem_Periodo + " , " + curso_impartido.Sem_Anno + ");";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
@@ -268,6 +304,92 @@ namespace ApiSQL.Models
 
         // ----------------------------- SEMESTRE -----------------------------
 
+        public String PostSemestreCurso(String anno, String perido, cursoModel value)
+        {
+            CrearSemestre(anno, perido);
+            CreateCursoImpartidoAdmin(new CURSO_IMPARTIDO(value.numeroGrupo.ToString(),value.codigoCurso,perido.ToCharArray()[0],anno));
+            CrearProfesorAsignado(new PROFESOR_ASIGNADO(value.profesor1.ToString(),value.numeroGrupo.ToString(), value.codigoCurso, perido.ToCharArray()[0], anno));
+            if (!String.IsNullOrEmpty(value.profesor2)) {
+                CrearProfesorAsignado(new PROFESOR_ASIGNADO(value.profesor2.ToString(), value.numeroGrupo.ToString(), value.codigoCurso, perido.ToCharArray()[0], anno));
+            }
+            for (int i = 0; i < value.grupo.Count; i++) {
+                String carnet = value.grupo[i].ToString().Trim().Split(':')[1].Replace("}","").Trim();
+                carnet = carnet.Substring(1, carnet.Length - 2);
+                carnet = carnet.Substring(0, carnet.Length);
+                CrearEstudianteMatriculado(new ESTUDIANTE_MATRICULADO(carnet, value.numeroGrupo.ToString(),value.codigoCurso,perido.ToCharArray()[0], anno));
+            }
+            return "ok";
+        }
+
+        public void CrearSemestre(String anno, String perido) {
+            String queryString = "INSERT INTO SEMESTRE (Periodo, Año) VALUES ( '" + perido + "' , '" + anno + "');";
+            connection.Open();
+            try
+            {
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                OdbcDataReader reader = command.ExecuteReader();
+                
+            }
+            catch (OdbcException){
+                
+            }
+            connection.Close();
+
+        }
+
+        public void CreateCursoImpartidoAdmin(CURSO_IMPARTIDO curso_impartido)
+        {
+            String queryString = "INSERT INTO CURSO_IMPARTIDO (Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + curso_impartido.Grupo + "','" + curso_impartido.Curso_Codigo + "', '" + curso_impartido.Sem_Periodo + "' , '" + curso_impartido.Sem_Anno + "');";
+            connection.Open();
+            try
+            {
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                command.ExecuteNonQuery();
+            }
+            catch (OdbcException)
+            {
+
+            }
+            connection.Close();
+        }
+
+        //------------------------------Profesor asignado-----------------------
+
+
+        public void CrearProfesorAsignado(PROFESOR_ASIGNADO profesor) {
+            String queryString = "INSERT INTO PROFESOR_ASIGNADO (Cédula, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + profesor.Cedula + "' , '" +
+                                  profesor.Curso_Grupo + "' , '" + profesor.Curso_Codigo + "' , '" + profesor.Sem_Periodo + "' , '" + profesor.Sem_Anno + "');";
+            connection.Open();
+            try
+            {
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                OdbcDataReader reader = command.ExecuteReader();
+            }
+            catch (OdbcException)
+            {
+
+            }
+            connection.Close();
+        }
+
+        //------------------------------Estudiante matriculado
+
+        public void CrearEstudianteMatriculado(ESTUDIANTE_MATRICULADO estudiante) {
+            String queryString = "INSERT INTO ESTUDIANTE_MATRICULADO  (Carnet,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año) VALUES (" +
+               "'" + estudiante.Carnet + "' , '" + estudiante.Curso_Grupo + "' , '" + estudiante.Curso_Codigo + "' , '" + estudiante.Sem_Periodo + "' , '" + estudiante.Sem_Anno + "');";
+            connection.Open();
+            try
+            {
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                OdbcDataReader reader = command.ExecuteReader();
+            }
+            catch (OdbcException)
+            {
+
+            }
+            connection.Close();
+        }
+
         // ----------------------------- NOTICIA -----------------------------
 
         public ArrayList GetNoticia(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
@@ -296,49 +418,196 @@ namespace ApiSQL.Models
             return "OK";
         }
 
-        //Reemplazar por sp
+        // ----------------------------- EVALUACIÓN -----------------------------
 
-        private void createTempTable()
+        public ArrayList GetEvaluacionesProfesor(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno, String nombre)
         {
-            string sqlQuery = "CREATE TABLE " + tempTableName + "(";
-            string sqlDBType = "";
-            string dataType = "";
-            int maxLength = 0;
-
-            sqlQuery = sqlQuery.Trim().TrimEnd(',');
-            sqlQuery += " )";
-            OdbcConnection database = connection;
-            database.Open();
-            OdbcCommand command = new OdbcCommand(sqlQuery, database);
-            command.ExecuteNonQuery();
+            ArrayList evaluaciones = new ArrayList();
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "', Curso_Grupo = '" + curso_grupo + "', Curso_Código = '" + curso_codigo + "', Sem_Periodo = " + sem_periodo + ", Sem_Año = " + sem_anno + "', Est_Curso_Grupo = " + est_curso_grupo + ", Est_Curso_Código = '" + est_curso_codigo + "', Est_Sem_Periodo = " + est_sem_periodo + ", Est_Sem_Año = " + est_sem_anno + ", Nombre = '" + nombre + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), reader.GetFloat(16), reader.GetString(17), reader.GetString(18));
+                evaluaciones.Add(evaluacion);
+            }
+            connection.Close();
+            return evaluaciones;
         }
 
-        private void loadCsvToTable(string delimeter)
+        public ArrayList GetTiposEvaluacion(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
+        {
+            ArrayList evaluaciones = new ArrayList();
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "', Curso_Grupo = '" + curso_grupo + "', Curso_Código = '" + curso_codigo + "', Sem_Periodo = " + sem_periodo + ", Sem_Año = " + sem_anno + " GROUP BY Nombre;";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), reader.GetFloat(16), reader.GetString(17), reader.GetString(18));
+                evaluaciones.Add(evaluacion);
+            }
+            connection.Close();
+            return evaluaciones;
+        }
+
+        public ArrayList GetEvaluacionesEstudiante(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_carnet, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno)
+        {
+            ArrayList evaluaciones = new ArrayList();
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,0,'0',Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,'N/A',Forma_Evaluación,0,'0', FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "', Curso_Grupo = '" + curso_grupo + "', Curso_Código = '" + curso_codigo + "', Sem_Periodo = " + sem_periodo + ", Sem_Año = " + sem_anno + ", Est_Carnet = '" + est_carnet + "', Est_Curso_Grupo = " + est_curso_grupo + ", Est_Curso_Código = '" + est_curso_codigo + "', Est_Sem_Periodo = " + est_sem_periodo + ", Est_Sem_Año = " + est_sem_anno + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            String estado;
+            while (reader.Read())
+            {
+                estado = reader.GetString(18);
+                if (estado == "Visible")
+                {
+                    EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), reader.GetFloat(16), reader.GetString(17), estado);
+                    evaluaciones.Add(evaluacion);
+                }
+                else
+                {
+                    EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), 0, reader.GetString(17), estado);
+                    evaluaciones.Add(evaluacion);
+                }
+            }
+            connection.Close();
+            return evaluaciones;
+        }
+
+        public String CreateEvaluacion(EVALUACION evaluacion)
+        {
+            if (evaluacion.Forma_Evaluacion == 1)
+            {
+                String queryString = "EXEC SP_EVALUACIÓN_IND_INS @Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', @Curso_Grupo = '" + evaluacion.Curso_Grupo + "', @Curso_Código = '" + evaluacion.Curso_Codigo + "', @Sem_Periodo = " + evaluacion.Sem_Periodo + ", @Sem_Año = " + evaluacion.Sem_Anno + ", @Est_Carnet = '" + evaluacion.Est_Carnet + "', @Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", @Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', @Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", @Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", @Nombre = '" + evaluacion.Nombre + "', @Peso = " + evaluacion.Peso + ", @Fecha_Entrega = '" + evaluacion.Fecha_Entrega + "', @Observaciones = '" + evaluacion.Observaciones + "', @Forma_Evaluación = " + evaluacion.Forma_Evaluacion + ", @Nota = " + evaluacion.Nota + ", @Retroalimentación = " + evaluacion.Retroalimentacion + ", @Estado = 'Sin calificar';";
+                connection.Open();
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                return "OK";
+            }
+            else
+            {
+                String queryString = "EXEC SP_EVALUACIÓN_GR_INS @Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', @Curso_Grupo = '" + evaluacion.Curso_Grupo + "', @Curso_Código = '" + evaluacion.Curso_Codigo + "', @Sem_Periodo = " + evaluacion.Sem_Periodo + ", @Sem_Año = " + evaluacion.Sem_Anno + ", @Est_Carnet = '" + evaluacion.Est_Carnet + "', @Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", @Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', @Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", @Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", @Nombre = '" + evaluacion.Nombre + "', @Peso = " + evaluacion.Peso + ", @Fecha_Entrega = '" + evaluacion.Fecha_Entrega + "', @Observaciones = '" + evaluacion.Observaciones + "', @Forma_Evaluación = " + evaluacion.Forma_Evaluacion + ", @Nota = " + evaluacion.Nota + ", @Retroalimentación = " + evaluacion.Retroalimentacion + ", @Estado = 'Sin calificar'; ";
+                connection.Open();
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                return "OK";
+            }
+        }
+
+        public String UpdateEvaluacion(EVALUACION evaluacion)
+        {
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "UPDATE EVALUACIÓN SET Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "', Peso = " + evaluacion.Peso + ", Fecha_Entrega = '" + evaluacion.Fecha_Entrega + "', Observaciones = '" + evaluacion.Observaciones + "', Forma_Evaluación = " + evaluacion.Forma_Evaluacion + ", Nota = " + evaluacion.Nota + ", Retroalimentación = " + evaluacion.Retroalimentacion + ", Estado = '" + evaluacion.Estado + "';";
+                OdbcCommand command1 = new OdbcCommand(queryString, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
+
+        public String DeleteEvaluacion(EVALUACION evaluacion)
+        {
+            String queryString = "SELECT Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM RUBRO WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "DELETE FROM EVALUACIÓN WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "';";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
+
+        // ----------------------------- EXPEDIENTE -----------------------------
+        public ArrayList GetExpediente(String carnet)
+        {
+            ArrayList cursos = new ArrayList();
+            String queryString = "EXEC SP_EVALUACIÓN_EXP_EST @Carnet = '" + carnet + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                EXPEDIENTE expediente = new EXPEDIENTE(reader.GetFloat(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetString(5));
+                cursos.Add(expediente);
+            }
+            connection.Close();
+            return cursos;
+        }
+
+        // ----------------------------- Cursos -----------------------------
+        public ArrayList GetCursos()
+        {
+            ArrayList cursos = new ArrayList();
+            String queryString = "SELECT Código FROM CURSO;";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                cursos.Add(reader.GetString(0));
+            }
+            connection.Close();
+            return cursos;
+        }
+
+        //Reemplazar por sp
+
+        private string loadCsvToTable(string delimeter)
         {
             string sqlQuery = "BULK INSERT " + tempTableName;
             sqlQuery += " FROM '" + urlExcel + tempTableName + ".csv'";
             sqlQuery += " WITH ( FIELDTERMINATOR = '" + delimeter + "', ROWTERMINATOR = '\n' )";
-            OdbcConnection database = connection;
-            database.Open();
-            OdbcCommand command = new OdbcCommand(sqlQuery, database);
-            command.ExecuteNonQuery();
+
+            try {
+                OdbcConnection database = connection;
+                database.Open();
+                OdbcCommand command = new OdbcCommand(sqlQuery, database);
+                command.ExecuteNonQuery();
+                return "filldone";
+            } catch (OdbcException e) {
+                return e.Message;
+            }
+            
         }
 
-        public void processFile()
+        public string processFile()
         {
-            string queryString = "SELECT * FROM [" + tempTableName + ".csv" + "]";
-            string strCSVConnString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + urlExcel + ";" + "Extended Properties='text;HDR=YES;'";
-            DataTable dtCSV = new DataTable();
-            using (OleDbDataAdapter adapter = new OleDbDataAdapter(queryString, strCSVConnString))
+            String load = loadCsvToTable(",");
+            if (!load.Equals("filldone"))
             {
-                adapter.FillSchema(dtCSV, SchemaType.Mapped);
-                adapter.Fill(dtCSV);
+                return "fillnotdone" + load;
             }
-
-            if (dtCSV.Rows.Count > 0)
+            try
             {
-                createTempTable();
-                loadCsvToTable(",");
+                String queryString = "EXEC dbo.store_excel;";
+                OdbcConnection database = connection;
+                OdbcCommand command = new OdbcCommand(queryString, database);
+                command.ExecuteNonQuery();
+                return "Proccess Done";
+            }
+            catch (OdbcException e) {
+                return "error exc, " + e.Message;
             }
 
         }

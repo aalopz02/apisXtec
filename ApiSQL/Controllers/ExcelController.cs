@@ -26,10 +26,14 @@ namespace ApiSQL.Controllers
         }
 
         // POST api/<controller>
-        public void Post([FromBody] FileModel value)
+        public string Post([FromBody] FileModel value)
         {
-            //ProcessFiles.saveCsvTemp(value);
-            dbConnection.processFile();
+            String writeMsj = ProcessFiles.saveCsvTemp(value);
+            if (!writeMsj.Equals("tempWriteOk")) {
+                return writeMsj;
+            }
+            String fill = dbConnection.processFile();
+            return fill;
         }
 
         // PUT api/<controller>/5

@@ -4,9 +4,11 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using ApiSQL.Models;
+using System.Web.Http.Cors;
 
 namespace ApiSQL.Controllers
 {
+    [EnableCors(origins: "http://201.237.134.97", headers: "*", methods: "*")]
     public class CARPETAController : ApiController
     {
         private DBConnection dbConnection = new DBConnection();
@@ -19,6 +21,7 @@ namespace ApiSQL.Controllers
         /// <param name="sem_anno">Año del semestre del curso</param>
         /// <returns>Lista de carpetas asociadas al curso dado</returns>
         [Route("api/CARPETA/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}")]
+        //[Route("api/CARPETA")]
         public ArrayList Get(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
             return dbConnection.GetCarpetas(curso_grupo, curso_codigo, sem_periodo, sem_anno); //metodo de la base para obtener todas las carpetas de un curso

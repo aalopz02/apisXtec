@@ -5,15 +5,17 @@ using System.Net;
 using System.Net.Http;
 using ApiSQL.Models;
 using System.Web.Http;
+using System.Collections;
 
 namespace ApiSQL.Controllers
 {
     public class CURSOController : ApiController
     {
+        private DBConnection dbConnection = new DBConnection();
         // GET: api/CURSO
-        public IEnumerable<string> Get()
+        public ArrayList Get()
         {
-            return new string[] { "value1", "value2" };
+            return dbConnection.GetCursos();
         }
 
         // GET: api/CURSO/5

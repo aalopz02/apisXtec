@@ -52,6 +52,9 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.Cors.5.2.7\lib\net45\System.Web.Cors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -60,6 +63,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebApi.Cors.5.2.7\lib\net45\System.Web.Http.Cors.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
@@ -138,6 +144,7 @@
     <Compile Include="Controllers\ENTREGABLEController.cs" />
     <Compile Include="Controllers\ESTUDIANTE_MATRICULADOController.cs" />
     <Compile Include="Controllers\EVALUACIONController.cs" />
+    <Compile Include="Controllers\ExpedienteController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -155,12 +162,14 @@
     <Compile Include="Models\CARPETA.cs" />
     <Compile Include="Models\CARRERA.cs" />
     <Compile Include="Models\CURSO.cs" />
+    <Compile Include="Models\CURSOCREADO.cs" />
     <Compile Include="Models\CURSO_IMPARTIDO.cs" />
     <Compile Include="Models\DBConnection.cs" />
     <Compile Include="Models\DOCUMENTO.cs" />
     <Compile Include="Models\ENTREGABLE.cs" />
     <Compile Include="Models\ESTUDIANTE_MATRICULADO.cs" />
     <Compile Include="Models\EVALUACION.cs" />
+    <Compile Include="Models\EXPEDIENTE.cs" />
     <Compile Include="Models\FileModel.cs" />
     <Compile Include="Models\NOTICIA.cs" />
     <Compile Include="Models\ProcessFiles.cs" />
@@ -180,6 +189,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -208,7 +218,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

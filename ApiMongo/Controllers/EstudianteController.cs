@@ -20,11 +20,11 @@ namespace ApiMongo.Controllers
 
         // GET: Estudiante by carnet
         public BsonDocument GetEstudiante(string carnet) {
-            var carnetQuery = new BsonDocument("Carnet", carnet);
+            var carnetQuery = new BsonDocument("Carnet", carnet.ToString());
             foreach (BsonDocument estudiante in MongoDBAccess.GetEstudianteDocuments().Find(new BsonDocument()).ToList()) {
                 BsonValue x;
                 estudiante.TryGetValue("Carnet", out x);
-                if (x.Equals(carnet)) {
+                if (x.Equals(carnet.ToString())) {
                     return estudiante;
                 }
             }
@@ -53,7 +53,7 @@ namespace ApiMongo.Controllers
                 }
                 var document = new BsonDocument {
 
-                { "Carnet", int.Parse(x.ToString()) },
+                { "Carnet", x.ToString() },
                 { "Nombre", nombre },
                 { "Correo", correo },
                 { "Telefono", telefono },

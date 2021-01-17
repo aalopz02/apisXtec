@@ -9,8 +9,8 @@ namespace ApiSQL.Models
 {
     public class ProcessFiles
     {
-        private static string urlExcel = "D://OneDrive//Escritorio//repo//cvsTemp//";
-
+        private static string urlExcel = "C://inetpub//wwwroot//repo//cvsTemp//";
+        //private static string urlExcel = "D://OneDrive//Escritorio//repo//";
         /// <summary>
         /// Funcion que salva un cvs en una carpeta temporal para leerlo
         /// </summary>
@@ -27,13 +27,13 @@ namespace ApiSQL.Models
                 using (var fs = new FileStream(urlExcel + name, FileMode.Create, FileAccess.Write))
                 {
                     fs.Write(data, 0, data.Length);
-                    return name;
+                    return "tempWriteOk";
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception caught in process: {0}", ex);
-                return null;
+                return ex.ToString();
             }
         }
     }

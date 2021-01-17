@@ -48,6 +48,6 @@ namespace ApiSQL.Controllers
             return Request.CreateResponse(HttpStatusCode.Created, "¡Curso_Impartido creado correctamente!");
         }
 
-        /// Aquí se debe insertar el código del controller para inicializar semestre que hizo Andrés
+        /// nel
     }
 }
