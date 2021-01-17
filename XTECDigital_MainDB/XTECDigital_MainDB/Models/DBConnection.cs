@@ -23,6 +23,11 @@ namespace XTECDigital_MainDB.Models
             connection = new OdbcConnection("Dsn=XTECDigital_ODBC;" + "Uid=XTECDigital;" + "Pwd=123;");
         }
 
+        /// <summary>
+        /// Instanciación de la clase que contiene los métodos para el envío de correos electrónicos
+        /// </summary>
+        Correos correos = new Correos();
+
         // ----------------------------- CARPETA -----------------------------
 
         /// <summary>
@@ -103,6 +108,7 @@ namespace XTECDigital_MainDB.Models
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
             connection.Close();
+            //email_documento();
             return "OK";
         }
 
@@ -349,7 +355,7 @@ namespace XTECDigital_MainDB.Models
             {
                 reader.Close();
                 String queryString1 = "UPDATE CARPETA SET Nombre = '" + rubro.Nombre + "' AND Porcentaje = '" + rubro.Porcentaje + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + " WHERE Nombre = '" + rubro.Nombre + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + ";";
-                OdbcCommand command1 = new OdbcCommand(queryString, connection);
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
                 return "200";
@@ -402,6 +408,7 @@ namespace XTECDigital_MainDB.Models
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
             connection.Close();
+            //email_noticia();
             return "OK";
         }
 
@@ -454,6 +461,7 @@ namespace XTECDigital_MainDB.Models
                 {
                     EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), reader.GetFloat(16), reader.GetString(17), estado);
                     evaluaciones.Add(evaluacion);
+                    //correos.email_nota();
                 }
                 else
                 {
@@ -497,7 +505,7 @@ namespace XTECDigital_MainDB.Models
             {
                 reader.Close();
                 String queryString1 = "UPDATE EVALUACIÓN SET Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "', Peso = " + evaluacion.Peso + ", Fecha_Entrega = '" + evaluacion.Fecha_Entrega + "', Observaciones = '" + evaluacion.Observaciones + "', Forma_Evaluación = " + evaluacion.Forma_Evaluacion + ", Nota = " + evaluacion.Nota + ", Retroalimentación = " + evaluacion.Retroalimentacion + ", Estado = '" + evaluacion.Estado + "';";
-                OdbcCommand command1 = new OdbcCommand(queryString, connection);
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
                 return "200";
@@ -526,41 +534,37 @@ namespace XTECDigital_MainDB.Models
         }
 
         // ----------------------------- ENTREGABLE -----------------------------
-        /*
-        public ArrayList GetCarreras()
+
+        public ENTREGABLE GetEntregable(int id)
         {
-            ArrayList carreras = new ArrayList();
-            String queryString = "SELECT ID, Nombre FROM CARRERA;";
+            String queryString = "SELECT ID, Data FROM ENTREGABLE WHERE ID = "+ id +";";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                CARRERA carrera = new CARRERA(reader.GetInt32(0), reader.GetString(1));
-                carreras.Add(carrera);
-            }
+            ENTREGABLE entregable = new ENTREGABLE(reader.GetInt32(0), reader.GetString(1));
             connection.Close();
-            return carreras;
+            return entregable;
         }
-        public String UpdateEvaluacion(EVALUACION evaluacion)
+        public String UpdateEntregable(ENTREGABLE entregable)
         {
-            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "';";
+            String queryString = "SELECT ID, Data FROM ENTREGABLE WHERE ID = '" + entregable.ID + "';";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {
                 reader.Close();
-                String queryString1 = "UPDATE EVALUACIÓN SET Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "', Peso = " + evaluacion.Peso + ", Fecha_Entrega = '" + evaluacion.Fecha_Entrega + "', Observaciones = '" + evaluacion.Observaciones + "', Forma_Evaluación = " + evaluacion.Forma_Evaluacion + ", Nota = " + evaluacion.Nota + ", Retroalimentación = " + evaluacion.Retroalimentacion + ", Estado = '" + evaluacion.Estado + "';";
-                OdbcCommand command1 = new OdbcCommand(queryString, connection);
+                String queryString1 = "UPDATE ENTREGABLE SET Data = '" + entregable.Data + "';";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
                 return "200";
             }
             connection.Close();
+            //email_entrega();
             return "404";
         }
-        */
+
         // ----------------------------- EXPEDIENTE -----------------------------
         public ArrayList GetExpediente(String carnet)
         {
