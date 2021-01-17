@@ -103,7 +103,7 @@ namespace XTECDigital_MainDB.Models
 
         public String CreateDocumento(DOCUMENTO document)
         {
-            String queryString = "INSERT INTO DOCUMENTO (Nombre, Data, Tamaño, Fecha_Subida, Carpeta_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + document.Nombre + "'," + document.Data + ",'" + document.Tamanno + "'," + document.Fecha_Subida + "," + document.Carpeta_Nombre + document.Curso_Grupo + "," + document.Curso_Codigo + document.Sem_Periodo + "," + document.Sem_Anno + ");";
+            String queryString = "INSERT INTO DOCUMENTO (Nombre, Data, Tamaño, Fecha_Subida, Carpeta_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + document.Nombre + "','" + document.Data + "','" + document.Tamanno + "','" + document.Fecha_Subida + "','" + document.Carpeta_Nombre + "'," + document.Curso_Grupo + ",'" + document.Curso_Codigo + "'," + document.Sem_Periodo + "," + document.Sem_Anno + ");";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
