@@ -126,9 +126,146 @@ namespace XTECDigital_MainDB.Models
             return "404";
         }
 
+        // ----------------------------- CARRERA -----------------------------
+
+        public ArrayList GetCarreras()
+        {
+            ArrayList carreras = new ArrayList();
+            String queryString = "SELECT ID, Nombre FROM CARRERA;";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                CARRERA carrera = new CARRERA(reader.GetInt32(0), reader.GetString(1));
+                carreras.Add(carrera);
+            }
+            connection.Close();
+            return carreras;
+        }
+
+        public String CreateCarrera(CARRERA carrera)
+        {
+            String queryString = "INSERT INTO CARRERA Nombre VALUES ('" + carrera.Nombre + ");";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            command.ExecuteNonQuery();
+            connection.Close();
+            return "OK";
+        }
+
+        public String DeleteCarrera(CARRERA carrera)
+        {
+            String queryString = "SELECT ID, Nombre FROM CARRERA WHERE ID = '" + carrera.ID + ";";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "DELETE FROM CARRERA WHERE ID = '" + carrera.ID + ";";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
+
+        // ----------------------------- SEMESTRE-----------------------------
+
+        public ArrayList GetSemestres()
+        {
+            ArrayList semestres = new ArrayList();
+            String queryString = "SELECT Periodo, Año FROM SEMESTRE;";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                SEMESTRE semestre = new SEMESTRE(reader.GetChar(0), reader.GetString(1));
+                semestres.Add(semestre);
+            }
+            connection.Close();
+            return semestres;
+        }
+
+        public String CreateSemestre(SEMESTRE semestre)
+        {
+            String queryString = "INSERT INTO SEMESTRE (Periodo, Año) VALUES ('" + semestre.Periodo + "'," + semestre.Anno + ");";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            command.ExecuteNonQuery();
+            connection.Close();
+            return "OK";
+        }
+
+        public String DeleteSemestre(SEMESTRE semestre)
+        {
+            String queryString = "SELECT Periodo, Año FROM SEMESTRE WHERE Periodo = '" + semestre.Periodo +   "AND Año = " + semestre.Anno + ";";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "DELETE FROM CURSO WHERE Periodo = '" + semestre.Periodo + "AND Año = " + semestre.Anno + ";";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
+
         // ----------------------------- CURSO -----------------------------
 
+        public ArrayList GetCursos()
+        {
+            ArrayList cursos = new ArrayList();
+            String queryString = "SELECT Código, Nombre, Créditos, Carrera_ID FROM CURSO;";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                CURSO curso = new CURSO(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3));
+                cursos.Add(curso);
+            }
+            connection.Close();
+            return cursos;
+        }
 
+        public String CreateCurso(CURSO curso)
+        {
+            String queryString = "INSERT INTO CURSO (Código, Nombre, Créditos, Carrera_ID) VALUES ('" + curso.Codigo + "'," + curso.Nombre + ",'" + curso.Creditos + "'," + curso.Carrera_ID + ");";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            command.ExecuteNonQuery();
+            connection.Close();
+            return "OK";
+        }
+
+        public String DeleteCurso(CURSO curso)
+        {
+            String queryString = "SELECT Código, Nombre, Créditos, Carrera_ID FROM CURSO WHERE Código = '" + curso.Codigo + ";";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "DELETE FROM CURSO WHERE Código = '" + curso.Codigo + ";";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
 
         // ----------------------------- CURSO_IMPARTIDO -----------------------------
 
@@ -239,9 +376,6 @@ namespace XTECDigital_MainDB.Models
             connection.Close();
             return "404";
         }
-
-
-        // ----------------------------- SEMESTRE -----------------------------
 
         // ----------------------------- NOTICIA -----------------------------
 
@@ -391,6 +525,42 @@ namespace XTECDigital_MainDB.Models
             return "404";
         }
 
+        // ----------------------------- ENTREGABLE -----------------------------
+        /*
+        public ArrayList GetCarreras()
+        {
+            ArrayList carreras = new ArrayList();
+            String queryString = "SELECT ID, Nombre FROM CARRERA;";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                CARRERA carrera = new CARRERA(reader.GetInt32(0), reader.GetString(1));
+                carreras.Add(carrera);
+            }
+            connection.Close();
+            return carreras;
+        }
+        public String UpdateEvaluacion(EVALUACION evaluacion)
+        {
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado FROM EVALUACIÓN WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "UPDATE EVALUACIÓN SET Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "', Peso = " + evaluacion.Peso + ", Fecha_Entrega = '" + evaluacion.Fecha_Entrega + "', Observaciones = '" + evaluacion.Observaciones + "', Forma_Evaluación = " + evaluacion.Forma_Evaluacion + ", Nota = " + evaluacion.Nota + ", Retroalimentación = " + evaluacion.Retroalimentacion + ", Estado = '" + evaluacion.Estado + "';";
+                OdbcCommand command1 = new OdbcCommand(queryString, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
+        */
         // ----------------------------- EXPEDIENTE -----------------------------
         public ArrayList GetExpediente(String carnet)
         {

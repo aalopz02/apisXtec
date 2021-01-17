@@ -1,39 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using XTECDigital_MainDB.Models;
 
 namespace XTECDigital_MainDB.Controllers
 {
     public class SEMESTREController : ApiController
     {
-        // GET: api/SEMESTRE
-        public IEnumerable<string> Get()
+        private DBConnection dbConnection = new DBConnection();
+        /// <summary>
+        /// Método para obtener todos los semestres que han existido
+        /// </summary>
+        /// <returns>Lista de todos los cursos</returns>
+        [Route("api/SEMESTRE")]
+        public ArrayList Get()
         {
-            return new string[] { "value1", "value2" };
+            return dbConnection.GetSemestres();
         }
 
-        // GET: api/SEMESTRE/5
-        public string Get(int id)
+        /// <summary>
+        /// Método para crear un semestre
+        /// </summary>
+        /// <param name="curso">Semestre por crear</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
+        [Route("api/SEMESTRE/create")]
+        public HttpResponseMessage Post([FromBody] SEMESTRE semestre)
         {
-            return "value";
+            string status = dbConnection.CreateSemestre(semestre);
+            if (!status.Equals("OK"))
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict, status);
+            }
+            return Request.CreateResponse(HttpStatusCode.Created, "¡Semestre creado correctamente!");
         }
 
-        // POST: api/SEMESTRE
-        public void Post([FromBody]string value)
+        /// <summary>
+        /// Método para eliminar un semestre
+        /// </summary>
+        /// <param name="curso">Curso por semestre</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
+        [Route("api/SEMESTRE/delete")]
+        public HttpResponseMessage Delete([FromBody] SEMESTRE semestre)
         {
-        }
-
-        // PUT: api/SEMESTRE/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/SEMESTRE/5
-        public void Delete(int id)
-        {
+            string response = dbConnection.DeleteSemestre(semestre);
+            if (!response.Equals("404"))
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, "¡Semestre eliminado correctamente!");
+            }
+            return Request.CreateResponse(HttpStatusCode.NotFound, "No se pudo encontrar el semestre solicitado");
         }
     }
 }
