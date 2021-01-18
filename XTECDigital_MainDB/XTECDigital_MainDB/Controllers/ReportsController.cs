@@ -1,39 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using XTECDigital_MainDB.Models;
+using Reports;
+
 
 namespace XTECDigital_MainDB.Controllers
 {
     public class ReportsController : ApiController
     {
-        // GET: api/Reports
-        public IEnumerable<string> Get()
+        private DBConnection dbConnection = new DBConnection();
+        private ReportManager rep = new ReportManager();
+        
+        [Route("api/Report/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}")]
+        public String GetProf(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
-            return new string[] { "value1", "value2" };
+            return rep.ReporteNotasProfesor(curso_grupo, curso_codigo, sem_periodo, sem_anno);
         }
 
-        // GET: api/Reports/5
-        public string Get(int id)
+        [Route("api/Report/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}/{est_carnet}")]
+        public String GetEst(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_carnet)
         {
-            return "value";
-        }
-
-        // POST: api/Reports
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT: api/Reports/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Reports/5
-        public void Delete(int id)
-        {
+            return rep.ReporteNotasEstudiante(curso_grupo, curso_codigo, sem_periodo, sem_anno, est_carnet);
         }
     }
 }
