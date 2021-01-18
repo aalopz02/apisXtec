@@ -21,7 +21,7 @@ namespace XTECDigital_MainDB.Controllers
         [Route("api/RUBRO/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}")]
         public ArrayList Get(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
-            return dbConnection.GetRubros(curso_grupo, curso_codigo, sem_periodo, sem_anno); //metodo de la base para obtener todas las carpetas de un curso
+            return dbConnection.GetRubros(curso_grupo, curso_codigo, sem_periodo, sem_anno);
         }
 
         /// <summary>
