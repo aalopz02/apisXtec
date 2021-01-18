@@ -100,9 +100,14 @@ namespace ApiSQL.Models
             return folders;
         }
 
+        /// <summary>
+        /// Método para crear una carpeta
+        /// </summary>
+        /// <param name="folder">Carpeta por crear</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
         public String CreateCarpeta(CARPETA folder)
         {
-            String queryString = "INSERT INTO CARPETA (Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('"+folder.Nombre+"',"+folder.Curso_Grupo+ ",'" + folder.Curso_Codigo+ "'," + folder.Sem_Periodo+ "," + folder.Sem_Anno+");";
+            String queryString = "INSERT INTO CARPETA (Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('"+folder.Nombre+"','" + folder.Curso_Grupo + "','" + folder.Curso_Codigo+ "'," + folder.Sem_Periodo+ "," + folder.Sem_Anno + ");";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
@@ -110,28 +115,14 @@ namespace ApiSQL.Models
             return "OK";
         }
 
-        public String UpdateCarpeta(CARPETA origfolder, CARPETA modfolder)
-        {
-            String queryString = "SELECT Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM CARPETA WHERE Nombre = '" + origfolder.Nombre + "' AND Curso_Grupo = " + origfolder.Curso_Grupo + " AND Curso_Código = '" + origfolder.Curso_Codigo + "' AND Sem_Periodo = " + origfolder.Sem_Periodo + " AND Sem_Año = " + origfolder.Sem_Anno + ";";
-            connection.Open();
-            OdbcCommand command = new OdbcCommand(queryString, connection);
-            OdbcDataReader reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                reader.Close();
-                String queryString1 = "UPDATE CARPETA SET Nombre = '" + modfolder.Nombre + "' AND Curso_Grupo = " + modfolder.Curso_Grupo + " AND Curso_Código = '" + modfolder.Curso_Codigo + "' AND Sem_Periodo = " + modfolder.Sem_Periodo + " AND Sem_Año = " + modfolder.Sem_Anno + " WHERE Nombre = '" + origfolder.Nombre + "' AND Curso_Grupo = " + origfolder.Curso_Grupo + " AND Curso_Código = '" + origfolder.Curso_Codigo + "' AND Sem_Periodo = " + origfolder.Sem_Periodo + " AND Sem_Año = " + origfolder.Sem_Anno + ";";
-                OdbcCommand command1 = new OdbcCommand(queryString, connection);
-                command1.ExecuteNonQuery();
-                connection.Close();
-                return "200";
-            }
-            connection.Close();
-            return "404";
-        }
-
+        /// <summary>
+        /// Método para eliminar una carpeta
+        /// </summary>
+        /// <param name="folder">Carpetar por eliminar</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
         public String DeleteCarpeta(CARPETA folder)
         {
-            String queryString = "SELECT Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM CARPETA WHERE Nombre = '" + folder.Nombre + "' AND Curso_Grupo = " + folder.Curso_Grupo + " AND Curso_Código = '" + folder.Curso_Codigo + "' AND Sem_Periodo = " + folder.Sem_Periodo + " AND Sem_Año = " + folder.Sem_Anno + ";";
+            String queryString = "SELECT Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM CARPETA WHERE Nombre = '" + folder.Nombre + "' AND Curso_Grupo = '" + folder.Curso_Grupo + "' AND Curso_Código = '" + folder.Curso_Codigo + "' AND Sem_Periodo = " + folder.Sem_Periodo + " AND Sem_Año = " + folder.Sem_Anno + ";";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
@@ -272,7 +263,7 @@ namespace ApiSQL.Models
 
         public String CreateRubro(RUBRO rubro)
         {
-            String queryString = "INSERT INTO RUBRO (Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + rubro.Nombre + "'," + rubro.Porcentaje + "," + rubro.Curso_Grupo + ",'" + rubro.Curso_Codigo + "'," + rubro.Sem_Periodo + "," + rubro.Sem_Anno + ");";
+            String queryString = "INSERT INTO RUBRO (Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + rubro.Nombre + "'," + rubro.Porcentaje + ",'" + rubro.Curso_Grupo + "','" + rubro.Curso_Codigo + "'," + rubro.Sem_Periodo + "," + rubro.Sem_Anno + ");";
             connection.Open();
             try {
                 OdbcCommand command = new OdbcCommand(queryString, connection);
