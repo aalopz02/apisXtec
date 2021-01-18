@@ -11,7 +11,6 @@ namespace XTECDigital_MainDB.Controllers
 {
     public class ReportsController : ApiController
     {
-        private DBConnection dbConnection = new DBConnection();
         private ReportManager rep = new ReportManager();
         
         [Route("api/Report/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}")]
