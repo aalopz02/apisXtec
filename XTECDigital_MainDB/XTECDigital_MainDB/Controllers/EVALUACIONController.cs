@@ -51,7 +51,7 @@ namespace XTECDigital_MainDB.Controllers
         /// <param name="sem_anno">Periodo del año</param>
         /// <param name="nombre">Nombre del tipo de evaluación</param>
         /// <returns>Lista de todas las evaluaciones, de un estudiante, de un rubro</returns>
-        [Route("api/EVALUACION/Estudiante/{carnet}/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}")]
+        [Route("api/EVALUACION/Estudiante/{est_carnet}/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}")]
         public ArrayList GetEstudiante(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_carnet, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno)
         {
             return dbConnection.GetEvaluacionesEstudiante(curso_grupo, curso_codigo, sem_periodo, sem_anno, est_carnet, est_curso_grupo, est_curso_codigo, est_sem_periodo, est_sem_anno); 
