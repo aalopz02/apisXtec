@@ -37,6 +37,7 @@ namespace ApiSQL.Controllers
         /// <param name="sem_periodo">Periodo del semestre</param>
         /// <param name="sem_anno">Periodo del año</param>
         /// <returns>Lista de todas las evaluaciones de un tipo, de un rubro</returns>
+        [HttpGet]
         [Route("api/EVALUACION/Profesor/{rubro_nombre}/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}")]
         public ArrayList GetTipos(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {

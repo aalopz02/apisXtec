@@ -290,7 +290,7 @@ namespace ApiSQL.Models
                 OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
-                return "error: " + e.Message + "; query: " + queryString;
+                return "200";
             }
             connection.Close();
             return "404" + queryString;
@@ -523,18 +523,19 @@ namespace ApiSQL.Models
         public ArrayList GetTiposEvaluacion(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
             ArrayList evaluaciones = new ArrayList();
-            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,0,'0','0','0000',0,3000,Nombre,0,'0000','000',0,0,'N/A','N/A'" +
+            String queryString = "SELECT 0,'0','0','0000',0,3000,Nombre,0,'0000','000',0,0,'N/A','N/A'" +
                 "FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "' AND " +
                 "Curso_Grupo = '" + curso_grupo + "' AND" +
                 " Curso_Código = '" + curso_codigo + "' AND" +
                 " Sem_Periodo = " + sem_periodo + " AND" +
                 " Sem_Año = " + sem_anno + " GROUP BY Nombre;";
+           
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), reader.GetFloat(16), reader.GetString(17), reader.GetString(18));
+                EVALUACION evaluacion = new EVALUACION(rubro_nombre, curso_grupo, curso_codigo, sem_periodo, sem_anno, reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetChar(4), reader.GetString(5), reader.GetString(6), reader.GetFloat(7), reader.GetString(8), reader.GetString(9), reader.GetInt32(10), reader.GetFloat(11), reader.GetString(12), reader.GetString(13));
                 evaluaciones.Add(evaluacion);
             }
             connection.Close();
