@@ -19,10 +19,9 @@ namespace ApiMongo.Controllers
         }
 
         // GET: Profesor by cedula
-        [System.Web.Http.Cors.DisableCors()]
-        public BsonDocument GetProfesor(String cedula)
+        public BsonDocument GetProfesor(int cedula)
         {
-            var carnetQuery = new BsonDocument("Cedula", cedula.ToString());
+            var carnetQuery = new BsonDocument("Cedula", cedula);
             foreach (BsonDocument profesor in MongoDBAccess.GetProfesoresDocuments().Find(new BsonDocument()).ToList())
             {
                 BsonValue x;
@@ -37,7 +36,7 @@ namespace ApiMongo.Controllers
 
         //Patch profesor
         //https://localhost:44370/api/Profesor?cedulaProfesor=12345&nombre=Andres_A&correo=aalopz02@gmial.com&contrasenna=clave
-        public void PatchProfesor(String cedulaProfesor, String nombre, String correo, String contrasenna)
+        public void PatchProfesor(int cedulaProfesor, String nombre, String correo, String contrasenna)
         {
             BsonDocument old = GetProfesor(cedulaProfesor);
             if (old == null)
@@ -59,7 +58,7 @@ namespace ApiMongo.Controllers
                 }
                 var document = new BsonDocument {
 
-                { "Cedula", x.ToString() },
+                { "Cedula", int.Parse(x.ToString()) },
                 { "Nombre", nombre },
                 { "Correo", correo },
                 { "Contrasenna", pass }
@@ -73,7 +72,7 @@ namespace ApiMongo.Controllers
 
         //Post profesor
         //https://localhost:44370/api/Profesor?cedula=12345&nombre=Profesor1&correo=aalopz02@gmial.com&contrasenna=clave
-        public void PostProfesor(String cedula, String nombre, String correo, String contrasenna)
+        public void PostProfesor(int cedula, String nombre, String correo, String contrasenna)
         {
 
             var document = new BsonDocument {

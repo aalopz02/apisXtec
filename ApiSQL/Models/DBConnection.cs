@@ -290,10 +290,10 @@ namespace ApiSQL.Models
                 OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
-                return "200";
+                return "error: " + e.Message + "; query: " + queryString;
             }
             connection.Close();
-            return "404";
+            return "404" + queryString;
         }
 
         public String DeleteRubro(RUBRO rubro)

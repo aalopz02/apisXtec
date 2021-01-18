@@ -224,12 +224,15 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\EstudianteController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\INFOController.cs" />
     <Compile Include="Controllers\ProfesorController.cs" />
     <Compile Include="Mist\Encript.cs" />
     <Compile Include="Mist\MongoDBAccess.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ModelEstudiante.cs" />
+    <Compile Include="Models\ModelEstudianteCarnet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -274,8 +277,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Estudiante\" />
+    <Folder Include="Views\INFO\" />
     <Folder Include="Views\Profesor\" />
   </ItemGroup>
   <ItemGroup>
