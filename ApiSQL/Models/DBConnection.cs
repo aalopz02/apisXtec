@@ -289,19 +289,27 @@ namespace ApiSQL.Models
         {
             String queryString = "SELECT Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM RUBRO WHERE Nombre = '" + rubro.Nombre + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + ";";
             connection.Open();
-            OdbcCommand command = new OdbcCommand(queryString, connection);
-            OdbcDataReader reader = command.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                reader.Close();
-                String queryString1 = "UPDATE CARPETA SET Nombre = '" + rubro.Nombre + "' AND Porcentaje = '" + rubro.Porcentaje + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + " WHERE Nombre = '" + rubro.Nombre + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + ";";
-                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
-                command1.ExecuteNonQuery();
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                OdbcDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    reader.Close();
+                    String queryString1 = "UPDATE CARPETA SET Nombre = '" + rubro.Nombre + "' AND Porcentaje = '" + rubro.Porcentaje + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = '" + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + " WHERE Nombre = '" + rubro.Nombre + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + ";";
+                    OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                    command1.ExecuteNonQuery();
+                    connection.Close();
+                    return "200";
+                }
+            }
+            catch (OdbcException e)
+            {
                 connection.Close();
-                return "200";
+                return "error: " + e.Message + "; query: " + queryString;
             }
             connection.Close();
-            return "404";
+            return "404" + queryString;
         }
 
         public String DeleteRubro(RUBRO rubro)
