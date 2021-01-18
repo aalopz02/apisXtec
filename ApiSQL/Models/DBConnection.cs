@@ -471,6 +471,20 @@ namespace ApiSQL.Models
 
         // ----------------------------- EVALUACIÓN -----------------------------
 
+        /// <summary>
+        /// Método para obtener las evaluaciones de un tipo de todos los estudiantes
+        /// </summary>
+        /// <param name="rubro_nombre">Nombre del rubro al que corresponde la evaluación</param>
+        /// <param name="curso_grupo">Grupo del curso</param>
+        /// <param name="curso_codigo">Código del curso</param>
+        /// <param name="sem_periodo">Periodo del semestre</param>
+        /// <param name="sem_anno">Año del semestre</param>
+        /// <param name="est_curso_grupo">Grupo del curso</param>
+        /// <param name="est_curso_codigo">Código del curso</param>
+        /// <param name="est_sem_periodo">Periodo del semestre</param>
+        /// <param name="est_sem_anno">Año del semestre</param>
+        /// <param name="nombre">Nombre (tipo) de la evaluación</param>
+        /// <returns></returns>
         public ArrayList GetEvaluacionesProfesor(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno, String nombre)
         {
             ArrayList evaluaciones = new ArrayList();
@@ -479,8 +493,8 @@ namespace ApiSQL.Models
                 " Curso_Grupo = '" + curso_grupo + "' AND" +
                 " Curso_Código = '" + curso_codigo + "' AND" +
                 "Sem_Periodo = " + sem_periodo + " AND" +
-                " Sem_Año = " + sem_anno + "' AND" +
-                " Est_Curso_Grupo = " + est_curso_grupo + " AND" +
+                " Sem_Año = " + sem_anno + " AND" +
+                " Est_Curso_Grupo = '" + est_curso_grupo + "' AND" +
                 " Est_Curso_Código = '" + est_curso_codigo + "' AND" +
                 " Est_Sem_Periodo = " + est_sem_periodo + " AND" +
                 " Est_Sem_Año = " + est_sem_anno + " AND" +
@@ -497,10 +511,19 @@ namespace ApiSQL.Models
             return evaluaciones;
         }
 
+        /// <summary>
+        /// Método para obtener los tipos de evaluaciones existentes en un rubro dado
+        /// </summary>
+        /// <param name="rubro_nombre">Nombre del rubro</param>
+        /// <param name="curso_grupo">Grupo del curso</param>
+        /// <param name="curso_codigo">Código del curso</param>
+        /// <param name="sem_periodo">Periodo del semestre</param>
+        /// <param name="sem_anno">Año del semestre</param>
+        /// <returns></returns>
         public ArrayList GetTiposEvaluacion(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
             ArrayList evaluaciones = new ArrayList();
-            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado " +
+            String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,0,'0','0','0000',0,3000,Nombre,0,'0000','000',0,0,'N/A','N/A'" +
                 "FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "' AND " +
                 "Curso_Grupo = '" + curso_grupo + "' AND" +
                 " Curso_Código = '" + curso_codigo + "' AND" +
@@ -518,24 +541,35 @@ namespace ApiSQL.Models
             return evaluaciones;
         }
 
+        /// <summary>
+        /// Método para obtener todas las evaluaciones de un estudiante
+        /// </summary>
+        /// <param name="curso_grupo">Grupo del curso</param>
+        /// <param name="curso_codigo">Código del curso</param>
+        /// <param name="sem_periodo">Periodo del semestre</param>
+        /// <param name="sem_anno">Año del semestre</param>
+        /// <param name="est_carnet">Carnet del estudiante</param>
+        /// <param name="est_curso_grupo">Grupo del curso</param>
+        /// <param name="est_curso_codigo">Código del curso</param>
+        /// <param name="est_sem_periodo">Periodo del semestre</param>
+        /// <param name="est_sem_anno">Año del semestre</param>
+        /// <returns></returns>
         public ArrayList GetEvaluacionesEstudiante(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_carnet, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno)
         {
             ArrayList evaluaciones = new ArrayList();
-            String queryString = "SELECT Rubro_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año, 0, Est_Carnet, Est_Curso_Grupo, Est_Curso_Código, Est_Sem_Periodo, Est_Sem_Año, " +
-                "                        Nombre, Peso, Fecha_Entrega, Observaciones , Forma_Evaluación, Nota, '0', Estado" +
+            String queryString = "SELECT Rubro_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año, Est_Carnet, Est_Curso_Grupo, Est_Curso_Código, Est_Sem_Periodo, Est_Sem_Año, " +
+                "                        Nombre, Peso, Fecha_Entrega, Observaciones , Forma_Evaluación, Nota, Estado" +
                                  " FROM EVALUACIÓN WHERE " +
                                  " Curso_Grupo = '" + curso_grupo + "' AND " +
                                  " Curso_Código = '" + curso_codigo + "' AND " +
-                                 " Sem_Periodo = '" + sem_periodo + "' AND " +
-                                 " Sem_Año = '" + sem_anno + "' AND " +
-                                 " Est_Carnet = '" + est_carnet.Trim() + "' AND " +
+                                 " Sem_Periodo = " + sem_periodo + " AND " +
+                                 " Sem_Año = " + sem_anno + " AND " +
+                                 " Est_Carnet = '" + est_carnet + "' AND " +
                                  " Est_Curso_Grupo = '" + est_curso_grupo + "' AND " +
                                  " Est_Curso_Código = '" + est_curso_codigo + "' AND " +
-                                 " Est_Sem_Periodo = '" + est_sem_periodo + "' AND " +
-                                 " Est_Sem_Año = '" + est_sem_anno + "' ;";
-            connection.Open();
-            try
-            {
+                                 " Est_Sem_Periodo = " + est_sem_periodo + " AND " +
+                                 " Est_Sem_Año = " + est_sem_anno + " ;";
+            connection.Open();          
                 OdbcCommand command = new OdbcCommand(queryString, connection);
                 OdbcDataReader reader = command.ExecuteReader();
                 String estado;
@@ -546,24 +580,24 @@ namespace ApiSQL.Models
                     {
 
                         reader.GetString(13);
-                        EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3).ToCharArray()[0], reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9).ToCharArray()[0], reader.GetString(10), reader.GetString(11), Convert.ToSingle(reader.GetDouble(12)), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), Convert.ToSingle(reader.GetDouble(16)), reader.GetString(17), estado);
+                        EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), Convert.ToSingle(reader.GetDouble(16)), reader.GetString(17), estado);
                         evaluaciones.Add(evaluacion);
-                        //correos.email_nota();
                     }
                     else
                     {
-                        EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3).ToCharArray()[0], reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9).ToCharArray()[0], reader.GetString(10), reader.GetString(11), Convert.ToSingle(reader.GetDouble(12)), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), 0, reader.GetString(17), estado);
+                        EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), 0, reader.GetString(17), estado);
                         evaluaciones.Add(evaluacion);
                     }
                 }
-            }
-            catch (OdbcException e) {
-                evaluaciones.Add(e.Message + "query: "  + queryString);
-            }
             connection.Close();
             return evaluaciones;
         }
-
+                                                                    //REEMPLAZAR POR NUEVO SP
+        /// <summary>
+        /// Método para crear una evaluación
+        /// </summary>
+        /// <param name="evaluacion">Evalaución por crear</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
         public String CreateEvaluacion(EVALUACION evaluacion)
         {
             if (evaluacion.Forma_Evaluacion == 1)
@@ -586,6 +620,11 @@ namespace ApiSQL.Models
             }
         }
 
+        /// <summary>
+        /// Método para actualizar una evaluación
+        /// </summary>
+        /// <param name="evaluacion">Evaluación por actualizar</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
         public String UpdateEvaluacion(EVALUACION evaluacion)
         {
             String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado " +
@@ -595,7 +634,7 @@ namespace ApiSQL.Models
                 " Sem_Periodo = " + evaluacion.Sem_Periodo + " AND" +
                 " Sem_Año = " + evaluacion.Sem_Anno + " AND" +
                 " Est_Carnet = '" + evaluacion.Est_Carnet + "' AND" +
-                " Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + " AND" +
+                " Est_Curso_Grupo = '" + evaluacion.Est_Curso_Grupo + "' AND" +
                 " Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "' AND" +
                 " Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + " AND" +
                 " Est_Sem_Año = " + evaluacion.Est_Sem_Anno + " AND" +
@@ -606,7 +645,17 @@ namespace ApiSQL.Models
             if (reader.Read())
             {
                 reader.Close();
-                String queryString1 = "UPDATE EVALUACIÓN SET Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "', Curso_Grupo = '" + evaluacion.Curso_Grupo + "', Curso_Código = '" + evaluacion.Curso_Codigo + "', Sem_Periodo = " + evaluacion.Sem_Periodo + ", Sem_Año = " + evaluacion.Sem_Anno + ", Est_Carnet = '" + evaluacion.Est_Carnet + "', Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + ", Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "', Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + ", Est_Sem_Año = " + evaluacion.Est_Sem_Anno + ", Nombre = '" + evaluacion.Nombre + "', Peso = " + evaluacion.Peso + ", Fecha_Entrega = '" + evaluacion.Fecha_Entrega + "', Observaciones = '" + evaluacion.Observaciones + "', Forma_Evaluación = " + evaluacion.Forma_Evaluacion + ", Nota = " + evaluacion.Nota + ", Retroalimentación = " + evaluacion.Retroalimentacion + ", Estado = '" + evaluacion.Estado + "';";
+                String queryString1 = "UPDATE EVALUACIÓN SET Peso = " + evaluacion.Peso + ", Fecha_Entrega = '" + evaluacion.Fecha_Entrega + "', Observaciones = '" + evaluacion.Observaciones + "', Forma_Evaluación = " + evaluacion.Forma_Evaluacion + ", Nota = " + evaluacion.Nota + ", Retroalimentación = '" + evaluacion.Retroalimentacion + "', Estado = '" + evaluacion.Estado + " WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "' AND" +
+                " Curso_Grupo = '" + evaluacion.Curso_Grupo + "' AND" +
+                " Curso_Código = '" + evaluacion.Curso_Codigo + "' AND" +
+                " Sem_Periodo = " + evaluacion.Sem_Periodo + " AND" +
+                " Sem_Año = " + evaluacion.Sem_Anno + " AND" +
+                " Est_Carnet = '" + evaluacion.Est_Carnet + "' AND" +
+                " Est_Curso_Grupo = '" + evaluacion.Est_Curso_Grupo + "' AND" +
+                " Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "' AND" +
+                " Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + " AND" +
+                " Est_Sem_Año = " + evaluacion.Est_Sem_Anno + " AND" +
+                " Nombre = '" + evaluacion.Nombre + "';";
                 OdbcCommand command1 = new OdbcCommand(queryString, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
@@ -616,6 +665,11 @@ namespace ApiSQL.Models
             return "404";
         }
 
+        /// <summary>
+        /// Método para eliminar una evaluación
+        /// </summary>
+        /// <param name="evaluacion">Evaluación por eliminar</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
         public String DeleteEvaluacion(EVALUACION evaluacion)
         {
             String queryString = "SELECT Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año " +
@@ -625,7 +679,7 @@ namespace ApiSQL.Models
                 " Sem_Periodo = " + evaluacion.Sem_Periodo + " AND " +
                 " Sem_Año = " + evaluacion.Sem_Anno + " AND" +
                 " Est_Carnet = '" + evaluacion.Est_Carnet + "' AND " +
-                " Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + " AND" +
+                " Est_Curso_Grupo = '" + evaluacion.Est_Curso_Grupo + "' AND" +
                 " Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "' AND " +
                 " Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + " AND " +
                 " Est_Sem_Año = " + evaluacion.Est_Sem_Anno + " AND " +
@@ -636,18 +690,17 @@ namespace ApiSQL.Models
             if (reader.Read())
             {
                 reader.Close();
-                String queryString1 = "DELETE FROM EVALUACIÓN WHERE " +
-                    "Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "' AND " +
-                    " Curso_Grupo = '" + evaluacion.Curso_Grupo + "' AND " +
-                    " Curso_Código = '" + evaluacion.Curso_Codigo + "' AND " +
-                    " Sem_Periodo = " + evaluacion.Sem_Periodo + " AND " +
-                    " Sem_Año = " + evaluacion.Sem_Anno + " AND " +
-                    " Est_Carnet = '" + evaluacion.Est_Carnet + "' AND " +
-                    " Est_Curso_Grupo = " + evaluacion.Est_Curso_Grupo + " AND" +
-                    " Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "' AND " +
-                    " Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + " AND " +
-                    " Est_Sem_Año = " + evaluacion.Est_Sem_Anno + " AND " +
-                    " Nombre = '" + evaluacion.Nombre + "';";
+                String queryString1 = "DELETE FROM EVALUACIÓN WHERE Rubro_Nombre = '" + evaluacion.Rubro_Nombre + "' AND" +
+                " Curso_Grupo = '" + evaluacion.Curso_Grupo + "' AND " +
+                " Curso_Código = '" + evaluacion.Curso_Codigo + "' AND " +
+                " Sem_Periodo = " + evaluacion.Sem_Periodo + " AND " +
+                " Sem_Año = " + evaluacion.Sem_Anno + " AND" +
+                " Est_Carnet = '" + evaluacion.Est_Carnet + "' AND " +
+                " Est_Curso_Grupo = '" + evaluacion.Est_Curso_Grupo + "' AND" +
+                " Est_Curso_Código = '" + evaluacion.Est_Curso_Codigo + "' AND " +
+                " Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + " AND " +
+                " Est_Sem_Año = " + evaluacion.Est_Sem_Anno + " AND " +
+                " Nombre = '" + evaluacion.Nombre + "';";
                 OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
