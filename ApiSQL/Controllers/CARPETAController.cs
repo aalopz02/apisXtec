@@ -44,23 +44,6 @@ namespace ApiSQL.Controllers
         }
 
         /// <summary>
-        /// Método para actualizar los datos de una carpeta
-        /// </summary>
-        /// <param name="origfolder">Datos de carpeta original</param>
-        /// <param name="modfolder">Datos de carpeta modificada</param>
-        /// <returns>Mensaje sobre el estado de la operación</returns>
-        [Route("api/CARPETA/update")]
-        public HttpResponseMessage Put([FromBody] CARPETA origfolder, [FromBody] CARPETA modfolder)
-        {
-            string response = dbConnection.UpdateCarpeta(origfolder, modfolder);
-            if (response.Equals("200"))
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, "¡Carpeta actualizada correctamente!");
-            }
-            return Request.CreateResponse(HttpStatusCode.NotFound, "Carpeta no encontrada");
-        }
-
-        /// <summary>
         /// Método para eliminar una carpeta
         /// </summary>
         /// <param name="folder">Carpeta por eliminar</param>
