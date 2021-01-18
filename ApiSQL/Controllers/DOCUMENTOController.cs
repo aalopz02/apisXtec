@@ -31,7 +31,7 @@ namespace ApiSQL.Controllers
         /// </summary>
         /// <param name="document">Documento por crear</param>
         /// <returns>Mensaje sobre el estado de la operación</returns>
-        [Route("api/DOCUMENTO")]
+        [Route("api/DOCUMENTO/create")]
         public String Post([FromBody] DOCUMENTO document)
         {
             String status = dbConnection.CreateDocumento(document);

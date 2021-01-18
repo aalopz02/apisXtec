@@ -272,17 +272,22 @@ namespace ApiSQL.Models
 
         public String CreateRubro(RUBRO rubro)
         {
-            String queryString = "INSERT INTO RUBRO (Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + rubro.Nombre + "'," + rubro.Curso_Grupo + ",'" + rubro.Curso_Codigo + "'," + rubro.Sem_Periodo + "," + rubro.Sem_Anno + ");";
+            String queryString = "INSERT INTO RUBRO (Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + rubro.Nombre + "'," + rubro.Porcentaje + "," + rubro.Curso_Grupo + ",'" + rubro.Curso_Codigo + "'," + rubro.Sem_Periodo + "," + rubro.Sem_Anno + ");";
             connection.Open();
-            OdbcCommand command = new OdbcCommand(queryString, connection);
-            command.ExecuteNonQuery();
+            try {
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                command.ExecuteNonQuery();
+            } catch (OdbcException e) {
+                connection.Close();
+                return "error: " + e.Message + "; query: " + queryString;
+            }
             connection.Close();
             return "OK";
         }
 
         public String UpdateRubro(RUBRO rubro)
         {
-            String queryString = "SELECT Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM CARPETA WHERE Nombre = '" + rubro.Nombre + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + ";";
+            String queryString = "SELECT Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM RUBRO WHERE Nombre = '" + rubro.Nombre + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + ";";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
@@ -290,7 +295,7 @@ namespace ApiSQL.Models
             {
                 reader.Close();
                 String queryString1 = "UPDATE CARPETA SET Nombre = '" + rubro.Nombre + "' AND Porcentaje = '" + rubro.Porcentaje + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + " WHERE Nombre = '" + rubro.Nombre + "' AND Curso_Grupo = " + rubro.Curso_Grupo + " AND Curso_Código = '" + rubro.Curso_Codigo + "' AND Sem_Periodo = " + rubro.Sem_Periodo + " AND Sem_Año = " + rubro.Sem_Anno + ";";
-                OdbcCommand command1 = new OdbcCommand(queryString, connection);
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
                 return "200";
