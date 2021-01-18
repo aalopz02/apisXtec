@@ -11,12 +11,19 @@ namespace ApiSQL.Controllers
 {
     public class SEMESTREController : ApiController
     {
+
         private DBConnection dbConnection = new DBConnection();
-        // GET: api/SEMESTRE
-        public IEnumerable<string> Get()
+
+        /// <summary>
+        /// Método para obtener todos los semestres que han existido
+        /// </summary>
+        /// <returns>Lista de todos los cursos</returns>
+        [Route("api/SEMESTRE")]
+        public ArrayList Get()
         {
-            return new string[] { "value1", "value2" };
+            return dbConnection.GetSemestres();
         }
+
 
         // GET: api/SEMESTRE/5
         public ArrayList Get(int id)
@@ -34,11 +41,23 @@ namespace ApiSQL.Controllers
         // PUT: api/SEMESTRE/5
         public void Put(int id, [FromBody]string value)
         {
+
         }
 
-        // DELETE: api/SEMESTRE/5
-        public void Delete(int id)
+        /// <summary>
+        /// Método para eliminar un semestre
+        /// </summary>
+        /// <param name="curso">Curso por semestre</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
+        [Route("api/SEMESTRE/delete")]
+        public HttpResponseMessage Delete([FromBody] SEMESTRE semestre)
         {
+            string response = dbConnection.DeleteSemestre(semestre);
+            if (!response.Equals("404"))
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, "¡Semestre eliminado correctamente!");
+            }
+            return Request.CreateResponse(HttpStatusCode.NotFound, "No se pudo encontrar el semestre solicitado");
         }
     }
 }

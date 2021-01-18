@@ -36,9 +36,20 @@ namespace ApiSQL.Controllers
         {
         }
 
-        // DELETE: api/CURSO/5
-        public void Delete(int id)
+        /// <summary>
+        /// Método para eliminar un curso
+        /// </summary>
+        /// <param name="curso">Curso por eliminar</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
+        [Route("api/CURSO/delete")]
+        public HttpResponseMessage Delete([FromBody] CURSO curso)
         {
+            string response = dbConnection.DeleteCurso(curso);
+            if (!response.Equals("404"))
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, "¡Curso eliminado correctamente!");
+            }
+            return Request.CreateResponse(HttpStatusCode.NotFound, "No se pudo encontrar el curso solicitado");
         }
     }
 }

@@ -161,6 +161,7 @@
     </Compile>
     <Compile Include="Models\CARPETA.cs" />
     <Compile Include="Models\CARRERA.cs" />
+    <Compile Include="Models\Correos.cs" />
     <Compile Include="Models\CURSO.cs" />
     <Compile Include="Models\CURSOCREADO.cs" />
     <Compile Include="Models\CURSO_IMPARTIDO.cs" />

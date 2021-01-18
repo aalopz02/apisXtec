@@ -10,31 +10,31 @@ namespace ApiSQL.Controllers
 {
     public class ENTREGABLEController : ApiController
     {
-        // GET: api/ENTREGABLE
-        public IEnumerable<string> Get()
+        private DBConnection dbConnection = new DBConnection();
+        /// <summary>
+        /// Método para obtener un entregable
+        /// </summary>
+        /// <returns>Entregable solicitado</returns>
+        [Route("api/ENTREGABLE/id")]
+        public ENTREGABLE Get(int id)
         {
-            return new string[] { "value1", "value2" };
+            return dbConnection.GetEntregable(id);
         }
 
-        // GET: api/ENTREGABLE/5
-        public string Get(int id)
+        /// <summary>
+        /// Método para actualizar un entregable (es el que se utiliza para las entregas en evaluaciones)
+        /// </summary>
+        /// <param name="entregable">Entregable por actualizar</param>
+        /// <returns>Mensaje sobre el estado de la operación</returns>
+        [Route("api/ENTREGABLE/update")]
+        public HttpResponseMessage Put([FromBody] ENTREGABLE entregable)
         {
-            return "value";
-        }
-
-        // POST: api/ENTREGABLE
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT: api/ENTREGABLE/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/ENTREGABLE/5
-        public void Delete(int id)
-        {
+            string response = dbConnection.UpdateEntregable(entregable);
+            if (response.Equals("200"))
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, "¡Entregable actualizado correctamente!");
+            }
+            return Request.CreateResponse(HttpStatusCode.NotFound, "Entregable no encontrado");
         }
     }
 }

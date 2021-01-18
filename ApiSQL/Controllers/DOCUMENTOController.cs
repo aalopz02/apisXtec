@@ -36,13 +36,6 @@ namespace ApiSQL.Controllers
         {
             String status = dbConnection.CreateDocumento(document);
             return status;
-            /*
-            if (!status.Equals("OK"))
-            {
-                return Request.CreateResponse(HttpStatusCode.Conflict, status);
-            }
-            return Request.CreateResponse(HttpStatusCode.Created, "¡Documento creado correctamente!");
-            */
         }
 
         /// <summary>

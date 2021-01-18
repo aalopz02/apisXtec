@@ -20,6 +20,11 @@ namespace ApiSQL.Models
         //private string urlExcel = "D://OneDrive//Escritorio//repo//";
         private string tempTableName = "tablaTemp";
 
+        /// <summary>
+        /// Instanciación de la clase que contiene los métodos para el envío de correos electrónicos
+        /// </summary>
+        Correos correos = new Correos();
+
         public OdbcConnection connection;
 
         /// <summary>
@@ -365,6 +370,43 @@ namespace ApiSQL.Models
             connection.Close();
         }
 
+        public String DeleteSemestre(SEMESTRE semestre)
+        {
+            String queryString = "SELECT Periodo, Año FROM SEMESTRE WHERE Periodo = '" + semestre.Periodo + "AND Año = " + semestre.Anno + ";";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "DELETE FROM CURSO WHERE Periodo = '" + semestre.Periodo + "AND Año = " + semestre.Anno + ";";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
+
+
+        public ArrayList GetSemestres()
+        {
+            ArrayList semestres = new ArrayList();
+            String queryString = "SELECT Periodo, Año FROM SEMESTRE;";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                SEMESTRE semestre = new SEMESTRE(reader.GetChar(0), reader.GetString(1));
+                semestres.Add(semestre);
+            }
+            connection.Close();
+            return semestres;
+        }
+
+
         //------------------------------Profesor asignado-----------------------
 
 
@@ -593,6 +635,25 @@ namespace ApiSQL.Models
 
         }
 
+        public String DeleteCurso(CURSO curso)
+        {
+            String queryString = "SELECT Código, Nombre, Créditos, Carrera_ID FROM CURSO WHERE Código = '" + curso.Codigo + ";";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "DELETE FROM CURSO WHERE Código = '" + curso.Codigo + ";";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
+
         //Carreras
 
         public ArrayList GetCarreras()
@@ -613,6 +674,68 @@ namespace ApiSQL.Models
             return carreras;
         }
 
+        public String CreateCarrera(String nombreCarrera)
+        {
+            String queryString = "INSERT INTO CARRERA (Nombre) VALUES ( '" + nombreCarrera + "' );";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            command.ExecuteNonQuery();
+            connection.Close();
+            return "OK";
+        }
+
+        public String DeleteCarrera(CARRERA carrera)
+        {
+            String queryString = "SELECT ID, Nombre FROM CARRERA WHERE ID = '" + carrera.ID + ";";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "DELETE FROM CARRERA WHERE ID = '" + carrera.ID + ";";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            return "404";
+        }
+
+        // ----------------------------- ENTREGABLE -----------------------------
+
+        public ENTREGABLE GetEntregable(int id)
+        {
+            String queryString = "SELECT ID, Data FROM ENTREGABLE WHERE ID = " + id + ";";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            ENTREGABLE entregable = new ENTREGABLE(reader.GetInt32(0), reader.GetString(1));
+            connection.Close();
+            return entregable;
+        }
+        public String UpdateEntregable(ENTREGABLE entregable)
+        {
+            String queryString = "SELECT ID, Data FROM ENTREGABLE WHERE ID = '" + entregable.ID + "';";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                reader.Close();
+                String queryString1 = "UPDATE ENTREGABLE SET Data = '" + entregable.Data + "';";
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
+                command1.ExecuteNonQuery();
+                connection.Close();
+                return "200";
+            }
+            connection.Close();
+            //email_entrega();
+            return "404";
+        }
+
+        //Excel
 
         private string loadCsvToTable(string delimeter)
         {
