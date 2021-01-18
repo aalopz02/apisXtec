@@ -9,6 +9,10 @@ namespace ApiSQL.Controllers
 {
     public class CARRERAController : ApiController
     {
-
+        private DBConnection dbConnection = new DBConnection();
+        public ArrayList Get()
+        {
+            return dbConnection.GetCarreras();
+        }
     }
 }

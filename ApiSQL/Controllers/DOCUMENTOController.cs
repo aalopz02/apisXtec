@@ -31,15 +31,18 @@ namespace ApiSQL.Controllers
         /// </summary>
         /// <param name="document">Documento por crear</param>
         /// <returns>Mensaje sobre el estado de la operación</returns>
-        [Route("api/DOCUMENTO/create")]
-        public HttpResponseMessage Post([FromBody] DOCUMENTO document)
+        [Route("api/DOCUMENTO")]
+        public String Post([FromBody] DOCUMENTO document)
         {
-            string status = dbConnection.CreateDocumento(document);
+            String status = dbConnection.CreateDocumento(document);
+            return status;
+            /*
             if (!status.Equals("OK"))
             {
                 return Request.CreateResponse(HttpStatusCode.Conflict, status);
             }
             return Request.CreateResponse(HttpStatusCode.Created, "¡Documento creado correctamente!");
+            */
         }
 
         /// <summary>

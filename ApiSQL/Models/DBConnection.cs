@@ -148,13 +148,13 @@ namespace ApiSQL.Models
         public ArrayList GetDocumentos(String carpeta_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
             ArrayList documents = new ArrayList();
-            String queryString = "SELECT Nombre, Data, Tamaño, Fecha_Subida, Carpeta_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM DOCUMENTO WHERE Carpeta_Nombre = '" + carpeta_nombre +  "' AND Curso_Grupo = " + curso_grupo + " AND Curso_Código = '" + curso_codigo + "' AND Sem_Periodo = " + sem_periodo + " AND Sem_Año = " + sem_anno + ";";
+            String queryString = "SELECT Nombre, Data, Tamaño, Fecha_Subida, Carpeta_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM DOCUMENTO WHERE Carpeta_Nombre = '" + carpeta_nombre + "' AND Curso_Grupo = " + curso_grupo + " AND Curso_Código = '" + curso_codigo + "' AND Sem_Periodo = " + sem_periodo + " AND Sem_Año = " + sem_anno + ";";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                    DOCUMENTO document = new DOCUMENTO(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetChar(7), reader.GetString(8));
+                DOCUMENTO document = new DOCUMENTO(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetChar(7), reader.GetString(8));
                 documents.Add(document);
             }
             connection.Close();
@@ -163,12 +163,24 @@ namespace ApiSQL.Models
 
         public String CreateDocumento(DOCUMENTO document)
         {
-            String queryString = "INSERT INTO DOCUMENTO (Nombre, Data, Tamaño, Fecha_Subida, Carpeta_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + document.Nombre + "'," + document.Data + ",'" + document.Tamanno + "'," + document.Fecha_Subida + "," + document.Carpeta_Nombre + document.Curso_Grupo + "," + document.Curso_Codigo + document.Sem_Periodo + "," + document.Sem_Anno + ");";
+            if (document == null) {
+                return "mae sigue null";
+            }
+            String queryString = "INSERT INTO DOCUMENTO (Nombre, Data, Tamaño, Fecha_Subida, Carpeta_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ( '" + document.Nombre + "' , '" + document.Data + "' , '" + document.Tamanno + "' , '" + document.Fecha_Subida + "' , '" + document.Carpeta_Nombre + "' , " + document.Curso_Grupo + ", '" + document.Curso_Codigo + "' , " + document.Sem_Periodo + "," + document.Sem_Anno + ");";
             connection.Open();
-            OdbcCommand command = new OdbcCommand(queryString, connection);
-            command.ExecuteNonQuery();
-            connection.Close();
-            return "OK";
+            try {
+  
+                OdbcCommand command = new OdbcCommand(queryString, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                //email_documento();
+                return "OK";
+
+            } catch (OdbcException e) {
+                connection.Close();
+                return "caca" + e.Message; 
+            }
+            
         }
 
 
@@ -570,8 +582,37 @@ namespace ApiSQL.Models
             connection.Close();
             return cursos;
         }
+ 
+        public void CreateCurso(CURSO value)
+        {
+            String queryString = "INSERT INTO CURSO (Código, Nombre, Créditos, Carrera_ID) VALUES ('" + value.Codigo + "','" + value.Nombre + "', ' " + value.Creditos + "' ," +value.Carrera_ID + ");";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            command.ExecuteNonQuery();
+            connection.Close();
 
-        //Reemplazar por sp
+        }
+
+        //Carreras
+
+        public ArrayList GetCarreras()
+        {
+            ArrayList carreras = new ArrayList();
+            String queryString = "SELECT ID ,Nombre FROM CARRERA;";
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            
+            while (reader.Read())
+            {
+                CARRERA expediente = new CARRERA(int.Parse(reader.GetString(0)), reader.GetString(1));
+                carreras.Add(expediente);
+            }
+            connection.Close();
+
+            return carreras;
+        }
+
 
         private string loadCsvToTable(string delimeter)
         {
@@ -611,5 +652,7 @@ namespace ApiSQL.Models
             }
 
         }
+
+       
     }
 }

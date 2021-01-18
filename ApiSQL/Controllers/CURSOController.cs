@@ -25,8 +25,10 @@ namespace ApiSQL.Controllers
         }
 
         // POST: api/CURSO
-        public void Post([FromBody]string value)
+        [Route("api/CURSO/create")]
+        public void Post([FromBody] CURSO value)
         {
+            dbConnection.CreateCurso(value);
         }
 
         // PUT: api/CURSO/5
