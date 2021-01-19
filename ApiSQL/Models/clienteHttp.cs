@@ -13,7 +13,7 @@ namespace ApiSQL.Models
 {
     public class clienteHttp
     {
-        static readonly HttpClient client = new HttpClient();
+        public clienteHttp() { }
 
         public IEnumerable GetAll() {
             ArrayList estudiantes = new ArrayList();

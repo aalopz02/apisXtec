@@ -15,6 +15,8 @@ namespace ApiSQL.Models
     /// </summary>
     public class DBConnection
     {
+        private Correos emailService = new Correos();
+        private clienteHttp comsMongo = new clienteHttp();
 
         private string urlExcel = "C://inetpub//wwwroot//repo//cvsTemp//";
         //private string urlExcel = "D://OneDrive//Escritorio//repo//";
@@ -50,7 +52,7 @@ namespace ApiSQL.Models
                     folders.Add(folder);
                 }
                 connection.Close();
-                
+
                 queryString = "SELECT * FROM tablaTemp;";
                 connection.Open();
                 command = new OdbcCommand(queryString, connection);
@@ -61,7 +63,7 @@ namespace ApiSQL.Models
                     folders.Add(folder);
                 }
                 connection.Close();
-                
+
                 return folders;
             }
             catch (OdbcException e)
@@ -70,8 +72,8 @@ namespace ApiSQL.Models
                 error.Add(e.Message);
                 return error;
             }
-            
-            
+
+
         }
 
         // ----------------------------- CARPETA -----------------------------
@@ -87,13 +89,13 @@ namespace ApiSQL.Models
         public ArrayList GetCarpetas(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
             ArrayList folders = new ArrayList();
-            String queryString = "SELECT Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM CARPETA WHERE Curso_Grupo = " + curso_grupo+ " AND Curso_Código = '" + curso_codigo+ "' AND Sem_Periodo = " + sem_periodo + " AND Sem_Año = " + sem_anno+";";
+            String queryString = "SELECT Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM CARPETA WHERE Curso_Grupo = " + curso_grupo + " AND Curso_Código = '" + curso_codigo + "' AND Sem_Periodo = " + sem_periodo + " AND Sem_Año = " + sem_anno + ";";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                CARPETA folder = new CARPETA(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3),reader.GetString(4));
+                CARPETA folder = new CARPETA(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4));
                 folders.Add(folder);
             }
             connection.Close();
@@ -107,7 +109,7 @@ namespace ApiSQL.Models
         /// <returns>Mensaje sobre el estado de la operación</returns>
         public String CreateCarpeta(CARPETA folder)
         {
-            String queryString = "INSERT INTO CARPETA (Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('"+folder.Nombre+"','" + folder.Curso_Grupo + "','" + folder.Curso_Codigo+ "'," + folder.Sem_Periodo+ "," + folder.Sem_Anno + ");";
+            String queryString = "INSERT INTO CARPETA (Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + folder.Nombre + "','" + folder.Curso_Grupo + "','" + folder.Curso_Codigo + "'," + folder.Sem_Periodo + "," + folder.Sem_Anno + ");";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
@@ -159,24 +161,50 @@ namespace ApiSQL.Models
 
         public String CreateDocumento(DOCUMENTO document)
         {
-            if (document == null) {
+            if (document == null)
+            {
                 return "mae sigue null";
             }
             String queryString = "INSERT INTO DOCUMENTO (Nombre, Data, Tamaño, Fecha_Subida, Carpeta_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ( '" + document.Nombre + "' , '" + document.Data + "' , '" + document.Tamanno + "' , '" + document.Fecha_Subida + "' , '" + document.Carpeta_Nombre + "' , " + document.Curso_Grupo + ", '" + document.Curso_Codigo + "' , " + document.Sem_Periodo + "," + document.Sem_Anno + ");";
             connection.Open();
-            try {
-  
+            try
+            {
+
                 OdbcCommand command = new OdbcCommand(queryString, connection);
                 command.ExecuteNonQuery();
                 connection.Close();
-                //email_documento();
+                IEnumerable correos = comsMongo.GetCorreos();
+                queryString = "SELECT Carnet FROM ESTUDIANTE_MATRICULADO WHERE " +
+                        " Curso_Grupo = '" + document.Curso_Grupo + "' AND " +
+                        " Curso_Código = '" + document.Curso_Codigo + "' AND " +
+                        " Sem_Periodo = '" + document.Sem_Periodo + "' AND " +
+                        "Sem_Año = '" + document.Sem_Anno + "';";
+                command = new OdbcCommand(queryString, connection);
+                connection.Open();
+                OdbcDataReader reader = command.ExecuteReader();
+                ArrayList carnetEstudiantesCurso = new ArrayList();
+
+                while (reader.Read())
+                {
+                    carnetEstudiantesCurso.Add(reader.GetString(0));
+                }
+                foreach (ModelEstudianteCarnet estudiante in correos)
+                {
+                    if (carnetEstudiantesCurso.Contains(estudiante.carnet))
+                    {
+                        emailService.email_documento(estudiante.correo, document.Curso_Codigo);
+                    }
+                    connection.Close();
+                }
                 return "OK";
 
-            } catch (OdbcException e) {
-                connection.Close();
-                return "caca" + e.Message; 
             }
-            
+            catch (OdbcException e)
+            {
+                connection.Close();
+                return "caca" + e.Message;
+            }
+
         }
 
 
@@ -233,15 +261,15 @@ namespace ApiSQL.Models
             return cursos_impartidos;
         }
 
-            public String CreateCursoImpartido(CURSO_IMPARTIDO curso_impartido)
-            {
+        public String CreateCursoImpartido(CURSO_IMPARTIDO curso_impartido)
+        {
             String queryString = "INSERT INTO CURSO_IMPARTIDO (Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + curso_impartido.Grupo + ",'" + curso_impartido.Curso_Codigo + "', " + curso_impartido.Sem_Periodo + " , " + curso_impartido.Sem_Anno + ");";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
             connection.Close();
             return "OK";
-            }
+        }
 
         // ----------------------------- RUBRO -----------------------------
 
@@ -265,10 +293,13 @@ namespace ApiSQL.Models
         {
             String queryString = "INSERT INTO RUBRO (Nombre, Porcentaje, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + rubro.Nombre + "'," + rubro.Porcentaje + ",'" + rubro.Curso_Grupo + "','" + rubro.Curso_Codigo + "'," + rubro.Sem_Periodo + "," + rubro.Sem_Anno + ");";
             connection.Open();
-            try {
+            try
+            {
                 OdbcCommand command = new OdbcCommand(queryString, connection);
                 command.ExecuteNonQuery();
-            } catch (OdbcException e) {
+            }
+            catch (OdbcException e)
+            {
                 connection.Close();
                 return "error: " + e.Message + "; query: " + queryString;
             }
@@ -321,31 +352,35 @@ namespace ApiSQL.Models
         public String PostSemestreCurso(String anno, String perido, cursoModel value)
         {
             CrearSemestre(anno, perido);
-            CreateCursoImpartidoAdmin(new CURSO_IMPARTIDO(value.numeroGrupo.ToString(),value.codigoCurso,perido.ToCharArray()[0],anno));
-            CrearProfesorAsignado(new PROFESOR_ASIGNADO(value.profesor1.ToString(),value.numeroGrupo.ToString(), value.codigoCurso, perido.ToCharArray()[0], anno));
-            if (!String.IsNullOrEmpty(value.profesor2)) {
+            CreateCursoImpartidoAdmin(new CURSO_IMPARTIDO(value.numeroGrupo.ToString(), value.codigoCurso, perido.ToCharArray()[0], anno));
+            CrearProfesorAsignado(new PROFESOR_ASIGNADO(value.profesor1.ToString(), value.numeroGrupo.ToString(), value.codigoCurso, perido.ToCharArray()[0], anno));
+            if (!String.IsNullOrEmpty(value.profesor2))
+            {
                 CrearProfesorAsignado(new PROFESOR_ASIGNADO(value.profesor2.ToString(), value.numeroGrupo.ToString(), value.codigoCurso, perido.ToCharArray()[0], anno));
             }
-            for (int i = 0; i < value.grupo.Count; i++) {
-                String carnet = value.grupo[i].ToString().Trim().Split(':')[1].Replace("}","").Trim();
+            for (int i = 0; i < value.grupo.Count; i++)
+            {
+                String carnet = value.grupo[i].ToString().Trim().Split(':')[1].Replace("}", "").Trim();
                 carnet = carnet.Substring(1, carnet.Length - 2);
                 carnet = carnet.Substring(0, carnet.Length);
-                CrearEstudianteMatriculado(new ESTUDIANTE_MATRICULADO(carnet, value.numeroGrupo.ToString(),value.codigoCurso,perido.ToCharArray()[0], anno));
+                CrearEstudianteMatriculado(new ESTUDIANTE_MATRICULADO(carnet, value.numeroGrupo.ToString(), value.codigoCurso, perido.ToCharArray()[0], anno));
             }
             return "ok";
         }
 
-        public void CrearSemestre(String anno, String perido) {
+        public void CrearSemestre(String anno, String perido)
+        {
             String queryString = "INSERT INTO SEMESTRE (Periodo, Año) VALUES ( '" + perido + "' , '" + anno + "');";
             connection.Open();
             try
             {
                 OdbcCommand command = new OdbcCommand(queryString, connection);
                 OdbcDataReader reader = command.ExecuteReader();
-                
+
             }
-            catch (OdbcException){
-                
+            catch (OdbcException)
+            {
+
             }
             connection.Close();
 
@@ -407,7 +442,8 @@ namespace ApiSQL.Models
         //------------------------------Profesor asignado-----------------------
 
 
-        public void CrearProfesorAsignado(PROFESOR_ASIGNADO profesor) {
+        public void CrearProfesorAsignado(PROFESOR_ASIGNADO profesor)
+        {
             String queryString = "INSERT INTO PROFESOR_ASIGNADO (Cédula, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año) VALUES ('" + profesor.Cedula + "' , '" +
                                   profesor.Curso_Grupo + "' , '" + profesor.Curso_Codigo + "' , '" + profesor.Sem_Periodo + "' , '" + profesor.Sem_Anno + "');";
             connection.Open();
@@ -425,7 +461,8 @@ namespace ApiSQL.Models
 
         //------------------------------Estudiante matriculado
 
-        public void CrearEstudianteMatriculado(ESTUDIANTE_MATRICULADO estudiante) {
+        public void CrearEstudianteMatriculado(ESTUDIANTE_MATRICULADO estudiante)
+        {
             String queryString = "INSERT INTO ESTUDIANTE_MATRICULADO  (Carnet,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año) VALUES (" +
                "'" + estudiante.Carnet + "' , '" + estudiante.Curso_Grupo + "' , '" + estudiante.Curso_Codigo + "' , '" + estudiante.Sem_Periodo + "' , '" + estudiante.Sem_Anno + "');";
             connection.Open();
@@ -453,7 +490,7 @@ namespace ApiSQL.Models
             while (reader.Read())
             {
                 NOTICIA noticia = new NOTICIA(reader.GetString(0), reader.GetString(1), reader.GetChar(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetString(7));
-               noticias.Add(noticia);
+                noticias.Add(noticia);
             }
             connection.Close();
             return noticias;
@@ -461,11 +498,36 @@ namespace ApiSQL.Models
 
         public String CreateNoticia(NOTICIA noticia)
         {
-            String queryString = "INSERT INTO NOTICIA (Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año, Título, Autor, Fecha, Mensaje) VALUES ('" + noticia.Curso_Grupo + ",'" + noticia.Curso_Codigo + "'," + noticia.Sem_Periodo + "," + noticia.Sem_Anno + noticia.Titulo + "," + noticia.Autor + noticia.Fecha + "," + noticia.Mensaje+ ");";
+            String queryString = "INSERT INTO NOTICIA (Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año, Título, Autor, Fecha, Mensaje) VALUES ('" + noticia.Curso_Grupo + ",'" + noticia.Curso_Codigo + "'," + noticia.Sem_Periodo + "," + noticia.Sem_Anno + noticia.Titulo + "," + noticia.Autor + noticia.Fecha + "," + noticia.Mensaje + ");";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
             connection.Close();
+
+            IEnumerable correos = comsMongo.GetCorreos();
+            queryString = "SELECT Carnet FROM ESTUDIANTE_MATRICULADO WHERE " +
+                    " Curso_Grupo = '" + noticia.Curso_Grupo + "' AND " +
+                    " Curso_Código = '" + noticia.Curso_Codigo + "' AND " +
+                    " Sem_Periodo = '" + noticia.Sem_Periodo + "' AND " +
+                    "Sem_Año = '" + noticia.Sem_Anno + "';";
+            command = new OdbcCommand(queryString, connection);
+            connection.Open();
+            OdbcDataReader reader = command.ExecuteReader();
+            ArrayList carnetEstudiantesCurso = new ArrayList();
+
+            while (reader.Read())
+            {
+                carnetEstudiantesCurso.Add(reader.GetString(0));
+            }
+            foreach (ModelEstudianteCarnet estudiante in correos)
+            {
+                if (carnetEstudiantesCurso.Contains(estudiante.carnet))
+                {
+                    emailService.email_noticia(estudiante.correo, noticia.Titulo, noticia.Mensaje, noticia.Curso_Codigo);
+                }
+                connection.Close();
+            }
+
             return "OK";
         }
 
@@ -532,7 +594,7 @@ namespace ApiSQL.Models
                 " Curso_Código = '" + curso_codigo + "' AND" +
                 " Sem_Periodo = " + sem_periodo + " AND" +
                 " Sem_Año = " + sem_anno + " GROUP BY Nombre;";
-           
+
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
@@ -573,30 +635,30 @@ namespace ApiSQL.Models
                                  " Est_Curso_Código = '" + est_curso_codigo + "' AND " +
                                  " Est_Sem_Periodo = " + est_sem_periodo + " AND " +
                                  " Est_Sem_Año = " + est_sem_anno + " ;";
-            connection.Open();          
-                OdbcCommand command = new OdbcCommand(queryString, connection);
-                OdbcDataReader reader = command.ExecuteReader();
-                String estado;
-                while (reader.Read())
+            connection.Open();
+            OdbcCommand command = new OdbcCommand(queryString, connection);
+            OdbcDataReader reader = command.ExecuteReader();
+            String estado;
+            while (reader.Read())
+            {
+                estado = reader.GetString(18);
+                if (estado == "Visible")
                 {
-                    estado = reader.GetString(18);
-                    if (estado == "Visible")
-                    {
+                    reader.GetString(13);
+                    EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), Convert.ToSingle(reader.GetDouble(16)), reader.GetString(17), estado);
+                    evaluaciones.Add(evaluacion);
 
-                        reader.GetString(13);
-                        EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), Convert.ToSingle(reader.GetDouble(16)), reader.GetString(17), estado);
-                        evaluaciones.Add(evaluacion);
-                    }
-                    else
-                    {
-                        EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), 0, reader.GetString(17), estado);
-                        evaluaciones.Add(evaluacion);
-                    }
                 }
+                else
+                {
+                    EVALUACION evaluacion = new EVALUACION(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetChar(3), reader.GetString(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetChar(9), reader.GetString(10), reader.GetString(11), reader.GetFloat(12), reader.GetString(13), reader.GetString(14), reader.GetInt32(15), 0, reader.GetString(17), estado);
+                    evaluaciones.Add(evaluacion);
+                }
+            }
             connection.Close();
             return evaluaciones;
         }
-                                                                    //REEMPLAZAR POR NUEVO SP
+        //REEMPLAZAR POR NUEVO SP
         /// <summary>
         /// Método para crear una evaluación
         /// </summary>
@@ -663,6 +725,35 @@ namespace ApiSQL.Models
                 OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
+                if (evaluacion.Estado.Equals("Visible"))
+                {
+                    connection.Open();
+                    IEnumerable correos = comsMongo.GetCorreos();
+                    queryString = "SELECT Carnet FROM ESTUDIANTE_MATRICULADO WHERE " +
+                        " Curso_Grupo = '" + evaluacion.Curso_Grupo + "' AND " +
+                        " Curso_Código = '" + evaluacion.Curso_Codigo + "' AND " +
+                        " Sem_Periodo = '" + evaluacion.Sem_Periodo + "' AND " +
+                        "Sem_Año = '" + evaluacion.Sem_Anno + "';";
+
+                    command = new OdbcCommand(queryString, connection);
+                    connection.Open();
+                    reader = command.ExecuteReader();
+                    ArrayList carnetEstudiantesCurso = new ArrayList();
+
+                    while (reader.Read())
+                    {
+                        carnetEstudiantesCurso.Add(reader.GetString(0));
+                    }
+                    foreach (ModelEstudianteCarnet estudiante in correos)
+                    {
+                        if (carnetEstudiantesCurso.Contains(estudiante.carnet))
+                        {
+                            emailService.email_entrega(estudiante.correo, evaluacion.Nombre, evaluacion.Curso_Codigo);
+                        }
+                    }
+
+                    connection.Close();
+                }
                 return "200";
             }
             connection.Close();
@@ -746,10 +837,10 @@ namespace ApiSQL.Models
             connection.Close();
             return cursos;
         }
- 
+
         public void CreateCurso(CURSO value)
         {
-            String queryString = "INSERT INTO CURSO (Código, Nombre, Créditos, Carrera_ID) VALUES ('" + value.Codigo + "','" + value.Nombre + "', ' " + value.Creditos + "' ," +value.Carrera_ID + ");";
+            String queryString = "INSERT INTO CURSO (Código, Nombre, Créditos, Carrera_ID) VALUES ('" + value.Codigo + "','" + value.Nombre + "', ' " + value.Creditos + "' ," + value.Carrera_ID + ");";
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             command.ExecuteNonQuery();
@@ -785,7 +876,7 @@ namespace ApiSQL.Models
             connection.Open();
             OdbcCommand command = new OdbcCommand(queryString, connection);
             OdbcDataReader reader = command.ExecuteReader();
-            
+
             while (reader.Read())
             {
                 CARRERA expediente = new CARRERA(int.Parse(reader.GetString(0)), reader.GetString(1));
@@ -865,16 +956,19 @@ namespace ApiSQL.Models
             sqlQuery += " FROM '" + urlExcel + tempTableName + ".csv'";
             sqlQuery += " WITH ( FIELDTERMINATOR = '" + delimeter + "', ROWTERMINATOR = '\n' )";
 
-            try {
+            try
+            {
                 OdbcConnection database = connection;
                 database.Open();
                 OdbcCommand command = new OdbcCommand(sqlQuery, database);
                 command.ExecuteNonQuery();
                 return "filldone";
-            } catch (OdbcException e) {
+            }
+            catch (OdbcException e)
+            {
                 return e.Message;
             }
-            
+
         }
 
         public string processFile()
@@ -892,12 +986,13 @@ namespace ApiSQL.Models
                 command.ExecuteNonQuery();
                 return "Proccess Done";
             }
-            catch (OdbcException e) {
+            catch (OdbcException e)
+            {
                 return "error exc, " + e.Message;
             }
 
         }
 
-       
+
     }
 }

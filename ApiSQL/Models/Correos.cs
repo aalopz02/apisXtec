@@ -29,7 +29,14 @@ namespace ApiSQL.Models
                 Body = body
             })
             {
-                smtp.Send(message);
+                try
+                {
+                    smtp.Send(message);
+                }
+                catch (SmtpException e) {
+                    return;
+                }
+                
             }
 
         }
@@ -60,4 +67,3 @@ namespace ApiSQL.Models
         }
     }
 }
-
