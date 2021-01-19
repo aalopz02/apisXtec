@@ -4,6 +4,9 @@ using System.Net;
 
 namespace ApiSQL.Models
 {
+    /// <summary>
+    /// Calse para manejar el envío de correos
+    /// </summary>
     public class Correos
     {
         public void send_email(string email, string subject, string body)

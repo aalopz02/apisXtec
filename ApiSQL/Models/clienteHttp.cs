@@ -11,10 +11,17 @@ using System.Web;
 
 namespace ApiSQL.Models
 {
+    /// <summary>
+    /// Clase para comunicarse con el api de mongo y obtener datos de estudiantes
+    /// </summary>
     public class clienteHttp
     {
         public clienteHttp() { }
 
+        /// <summary>
+        /// Obtiene todos los datos de cada estudiante y devuelve la lista de modelos
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable GetAll() {
             ArrayList estudiantes = new ArrayList();
             try
@@ -34,6 +41,10 @@ namespace ApiSQL.Models
             return estudiantes;
         }
 
+        /// <summary>
+        /// Obtiene la lista de carnets y correos de todos los estudiantes
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable GetCorreos()
         {
             ArrayList estudiantes = new ArrayList();

@@ -9,6 +9,9 @@ using System.Web.Http;
 
 namespace ApiSQL.Controllers
 {
+    /// <summary>
+    /// Controller miselaneo para obtener la información de estudiantes usando la clase de clienteHttp
+    /// </summary>
     public class CorreosController : ApiController
     {
         clienteHttp cliente = new clienteHttp();

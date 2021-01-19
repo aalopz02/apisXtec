@@ -17,9 +17,8 @@ namespace ApiSQL.Models
     {
         private Correos emailService = new Correos();
         private clienteHttp comsMongo = new clienteHttp();
-
         private string urlExcel = "C://inetpub//wwwroot//repo//cvsTemp//";
-        //private string urlExcel = "D://OneDrive//Escritorio//repo//";
+
         private string tempTableName = "tablaTemp";
 
         /// <summary>
@@ -37,6 +36,10 @@ namespace ApiSQL.Models
             connection = new OdbcConnection("Dsn=XTECDigital_ODBC;" + "Uid=XTECDigital;" + "Pwd=123;");
         }
 
+        /// <summary>
+        /// Método usado para pruebas
+        /// </summary>
+        /// <returns></returns>
         public ArrayList GetSemestre()
         {
             try
@@ -143,6 +146,15 @@ namespace ApiSQL.Models
 
         // ----------------------------- DOCUMENTO -----------------------------
 
+        /// <summary>
+        /// Método para manejar documentos
+        /// </summary>
+        /// <param name="carpeta_nombre"></param>
+        /// <param name="curso_grupo"></param>
+        /// <param name="curso_codigo"></param>
+        /// <param name="sem_periodo"></param>
+        /// <param name="sem_anno"></param>
+        /// <returns></returns>
         public ArrayList GetDocumentos(String carpeta_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
             ArrayList documents = new ArrayList();
@@ -159,6 +171,11 @@ namespace ApiSQL.Models
             return documents;
         }
 
+        /// <summary>
+        /// Método para crear documentos
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
         public String CreateDocumento(DOCUMENTO document)
         {
             if (document == null)
@@ -207,7 +224,11 @@ namespace ApiSQL.Models
 
         }
 
-
+        /// <summary>
+        /// Método para eliminar documentos
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
         public String DeleteDocumento(DOCUMENTO document)
         {
             String queryString = "SELECT Nombre, Data, Tamaño, Fecha_Subida, Carpeta_Nombre, Curso_Grupo, Curso_Código, Sem_Periodo, Sem_Año FROM DOCUMENTO WHERE Nombre = '" + document.Nombre + "' AND Carpeta_Nombre = '" + document.Carpeta_Nombre + "' AND Curso_Grupo = " + document.Curso_Grupo + " AND Curso_Código = '" + document.Curso_Codigo + "' AND Sem_Periodo = " + document.Sem_Periodo + " AND Sem_Año = " + document.Sem_Anno + ";";
@@ -658,7 +679,7 @@ namespace ApiSQL.Models
             connection.Close();
             return evaluaciones;
         }
-        //REEMPLAZAR POR NUEVO SP
+
         /// <summary>
         /// Método para crear una evaluación
         /// </summary>
@@ -949,7 +970,11 @@ namespace ApiSQL.Models
         }
 
         //Excel
-
+        /// <summary>
+        /// Método para cargar los datos desde un excel a una tabla temporal usando bulk insert
+        /// </summary>
+        /// <param name="delimeter"></param>
+        /// <returns></returns>
         private string loadCsvToTable(string delimeter)
         {
             string sqlQuery = "BULK INSERT " + tempTableName;
@@ -971,6 +996,10 @@ namespace ApiSQL.Models
 
         }
 
+        /// <summary>
+        /// Método para ejecutar el método que llena la tabla temporar y llamar al sp para cargar los datos en las tablas de sql que corresponden
+        /// </summary>
+        /// <returns></returns>
         public string processFile()
         {
             String load = loadCsvToTable(",");
