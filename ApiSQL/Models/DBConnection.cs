@@ -487,6 +487,8 @@ namespace ApiSQL.Models
         /// <returns></returns>
         public ArrayList GetEvaluacionesProfesor(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno, String nombre)
         {
+            rubro_nombre = Uri.UnescapeDataString(rubro_nombre);
+            nombre = Uri.UnescapeDataString(nombre);
             ArrayList evaluaciones = new ArrayList();
             String queryString = "SELECT Rubro_Nombre,Curso_Grupo,Curso_Código,Sem_Periodo,Sem_Año,Ent_ID,Est_Carnet,Est_Curso_Grupo,Est_Curso_Código,Est_Sem_Periodo,Est_Sem_Año,Nombre,Peso,Fecha_Entrega,Observaciones,Forma_Evaluación,Nota,Retroalimentación,Estado " +
                 "FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "' AND" +
@@ -522,6 +524,7 @@ namespace ApiSQL.Models
         /// <returns></returns>
         public ArrayList GetTiposEvaluacion(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno)
         {
+            rubro_nombre = Uri.UnescapeDataString(rubro_nombre);
             ArrayList evaluaciones = new ArrayList();
             String queryString = "SELECT 0,'0','0','0000',0,3000,Nombre,0,'0000','000',0,0,'N/A','N/A'" +
                 "FROM EVALUACIÓN WHERE Rubro_Nombre = '" + rubro_nombre + "' AND " +
@@ -554,7 +557,7 @@ namespace ApiSQL.Models
         /// <param name="est_curso_codigo">Código del curso</param>
         /// <param name="est_sem_periodo">Periodo del semestre</param>
         /// <param name="est_sem_anno">Año del semestre</param>
-        /// <returns></returns>
+        /// <returns>Lista de evaluaciones de un estudiante</returns>
         public ArrayList GetEvaluacionesEstudiante(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String est_carnet, String est_curso_grupo, String est_curso_codigo, char est_sem_periodo, String est_sem_anno)
         {
             ArrayList evaluaciones = new ArrayList();
@@ -657,7 +660,7 @@ namespace ApiSQL.Models
                 " Est_Sem_Periodo = " + evaluacion.Est_Sem_Periodo + " AND" +
                 " Est_Sem_Año = " + evaluacion.Est_Sem_Anno + " AND" +
                 " Nombre = '" + evaluacion.Nombre + "';";
-                OdbcCommand command1 = new OdbcCommand(queryString, connection);
+                OdbcCommand command1 = new OdbcCommand(queryString1, connection);
                 command1.ExecuteNonQuery();
                 connection.Close();
                 return "200";

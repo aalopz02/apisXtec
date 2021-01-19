@@ -22,6 +22,7 @@ namespace ApiSQL.Controllers
         /// <param name="sem_anno">Periodo del año</param>
         /// <param name="nombre">Nombre del tipo de evaluación</param>
         /// <returns>Lista de todas las evaluaciones de un tipo, de un rubro, de todos los estudiantes</returns>
+        [HttpGet]
         [Route("api/EVALUACION/Profesor/{rubro_nombre}/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}/{nombre}")]
         public ArrayList GetProfesor(String rubro_nombre, String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String nombre)
         {
@@ -54,6 +55,7 @@ namespace ApiSQL.Controllers
         /// <param name="sem_anno">Periodo del año</param>
         /// <param name="nombre">Nombre del tipo de evaluación</param>
         /// <returns>Lista de todas las evaluaciones, de un estudiante, de un rubro</returns>
+        [HttpGet]
         [Route("api/EVALUACION/Estudiante/{carnet}/{curso_grupo}/{curso_codigo}/{sem_periodo}/{sem_anno}")]
         public ArrayList GetEstudiante(String curso_grupo, String curso_codigo, char sem_periodo, String sem_anno, String carnet)
         {
